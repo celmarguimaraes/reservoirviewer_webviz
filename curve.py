@@ -10,6 +10,9 @@ class Curve(ABC):
     def get_number_of_elements(self) -> int:
         return self.number_of_elements
 
+    def get_dimension(self) -> Dimension:
+        return self.dimension
+
     @abstractmethod
     def get_coordinate(self, d:int) -> Coordinate:
         pass
@@ -17,9 +20,6 @@ class Curve(ABC):
     @abstractmethod
     def get_d(self, coordinate:Coordinate) -> int:
         pass
-
-    def get_dimension(self) -> Dimension:
-        return self.dimension
 
     @abstractmethod
     def define_dimension(self, number_of_elements:int) -> Dimension:
