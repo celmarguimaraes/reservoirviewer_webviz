@@ -26,7 +26,7 @@ layout:
         content:
           - page: Some custom plugin
             content:
-            - SomeCustomPlugin:
+            - ReservoirViewer:
                 root: root/root/blabla
                 benchmark: benchmarck 
                 folder2d: intermediary_file.csv 

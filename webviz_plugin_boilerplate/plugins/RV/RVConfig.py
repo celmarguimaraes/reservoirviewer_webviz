@@ -110,6 +110,6 @@ def settingDrawConfigs(self, estrategias):
                 'Tipo de desenho não reconhecido, favor escolher entre pixelization e small multiples')
             # TODO  FAZER ILLEGAL EXCEPTION
 
-    def loadStaticMapModels(self, ropertyName, propertyFile, indexOfValueField):
+    def loadStaticMapModels(self, propertyName, propertyFile, indexOfValueField):
         # PARTE DO IZA
         print("modelos do iza carregando")

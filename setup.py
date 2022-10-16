@@ -13,7 +13,7 @@ setup(
     packages=find_packages(exclude=["tests"]),
     entry_points={
         "webviz_config_plugins": [
-            "SomeCustomPlugin = webviz_plugin_boilerplate.plugins:SomeCustomPlugin",
+            "ReservoirViewer = webviz_plugin_boilerplate.plugins:ReservoirViewer",
         ]
     },
     install_requires=[

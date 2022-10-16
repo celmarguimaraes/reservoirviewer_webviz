@@ -5,7 +5,7 @@ from webviz_config import WebvizPluginABC
 from .RV.RVConfig import Configuration
 
 
-class SomeCustomPlugin(WebvizPluginABC):
+class ReservoirViewer(WebvizPluginABC):
 
     def __init__(self,
                  root: str,

@@ -1,7 +1,8 @@
 import pandas as pd
-from pandas import DataFrame
 import matplotlib.pyplot as plt
 import csv
+import numpy as np
+
 
 class SmallMultiples:
     def __init__(self, path, curve):
@@ -17,38 +18,48 @@ class SmallMultiples:
                 lineCount = lineCount + 1
         # self.curve: Curve = curve
         self.colorMap = 'jet'
+        print("i, j, k: ", self.max_i, self.max_j, self.num_of_models)
+        self.read_file("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//intermediary_file.csv")
+
 
     # Getters
     def get_max_i(self) -> int:
         return self.max_i
 
+
     def get_max_j(self) -> int:
         return self.max_j
+
 
     def get_num_of_models(self) -> int:
         return self.num_of_models
 
+
     # def get_curve(self) -> Curve:
     #     return self.curve
 
+
     def read_file(self, path):
-        model = [[[0 for m in range(self.num_of_models)] for j in range(self.max_j)] for i in range(self.max_i)]
-        
-        with open(self.path) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=',')
-            line_count = 0
-            
-            for m in range(self.num_of_models):
-                for i in range(self.max_i):
-                    for j in range(self.max_j):
-                        model[i][j][m] = row[0]
-                        print(f'Processed {line_count} lines.')
-                
+        model = [[[0 for m in range(self.num_of_models)] for j in range(
+            self.max_j)] for i in range(self.max_i)]
+
+        with open(path) as csv_file:
+            file_content = []
+            for i in range(2):
+                next(csv_file)
+            for line in (csv_file):
+                line.replace("\n", "")
+                file_content.append(int(line))
+
+        file_content = np.array(file_content)
+        grid = file_content.reshape(self.max_i, self.max_j, self.num_of_models)
 
         for m in range(self.num_of_models):
-            draw_image(m)
+            self.draw_image(grid[m], m)
 
-    def draw_image(self, grid):
-        plt.imshow(grif, cmap='jet', interpolation='none', vmin=0, vmax=255)
+
+    def draw_image(self, grid, m):
+        plt.clf()
+        plt.imshow(grid, cmap='jet', interpolation='none', vmin=0, vmax=10)
         plt.colorbar()
-        plt.savefig("teste.png")
+        plt.savefig("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//teste"+str(m)+".png")
