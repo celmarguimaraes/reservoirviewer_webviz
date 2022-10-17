@@ -1,27 +1,29 @@
 import os
+from pathlib import Path
 from dash import html
 import subprocess as sub
 from webviz_config import WebvizPluginABC
 from .RV.RVConfig import Configuration
+from webviz_config.webviz_assets import WEBVIZ_ASSETS
 
 
 class ReservoirViewer(WebvizPluginABC):
 
     def __init__(self,
-                 root: str,
+                 root: Path,
                  benchmark: str,
-                 folder2d: str,
-                 folderDistMatr: str,
+                 folder2d: Path,
+                 folderDistMatr: Path,
                  chartType: str,
                  layoutCurve: str,
                  clusteringMethod: str,
-                 distanceMatrix: str,
+                 distanceMatrix: Path,
                  minClusters: int,
                  maxClusters: int,
                  iterations: int,
                  properties: list,
                  strategies: list,
-                 allModels: str,
+                 allModels: Path,
                  highlightedModels: str) -> None:
 
         super().__init__()
@@ -42,8 +44,6 @@ class ReservoirViewer(WebvizPluginABC):
         self.allModels = allModels
         self.highlightedModels = highlightedModels
 
-
-
         args = [
             self.root,
             self.benchmark,
@@ -61,23 +61,21 @@ class ReservoirViewer(WebvizPluginABC):
             self.allModels,
             self.highlightedModels]
         
+        image = Path("C:/Users/k/Documents/Unicamp/IC/rv_webviz_celmar/reservoirviewer_webviz/webviz_plugin_boilerplate/plugins/RV/generated/teste0.png")
+
+        self.image_url = WEBVIZ_ASSETS.add(image)
         rvConfig = Configuration(args)
+        
 
     @property
     def layout(self):
-        return (html.Div(
-            [self.root,
-             self.benchmark,
-             self.folder2d,
-             self.folderDistMatr,
-             self.chartType,
-             self.layoutCurve,
-             self.clusteringMethod,
-             self.distanceMatrix,
-             self.minClusters,
-             self.maxClusters,
-             self.iterations,
-             self.allModels,
-             self.highlightedModels]
+
+        style = {
+            "backgroundImage": f"url({self.image_url})",
+            "height": f"500px",
+            "align-items": "center",
+        }
+
+        return html.Div(
+            "teste imagem", style=style
         )
-    )
