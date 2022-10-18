@@ -1,11 +1,11 @@
 from curve import Curve
 from snake_curve import SnakeCurve
 from dimension import Dimension
-from coordinate import Coordinate
 import pandas as pd
 import numpy as np
-import math
 from pandas import DataFrame
+import csv
+from matplotlib import pyplot as plt
 
 class Pixelization:
     def __init__(self, path:str, curve:Curve) -> None:
@@ -23,24 +23,56 @@ class Pixelization:
         except:
             raise Exception('Something went wrong when trying to read the file.')
 
-    def generate_matrix(self):
+    # Separate each model in a matrix for itself
+    def generate_model_matrix(self):
         #NOTE: Each matrix inside needs to be squared
-        return np.array(self.read_to_list()).reshape(self.num_of_models, 9, 3)
+        return np.array(self.read_to_list()).reshape(self.num_of_models, self.max_i, self.max_j)
 
     #TEST: This method is not complete. Test purposes only.
-    def draw(self) -> None:
-        matrix = self.generate_matrix()
+    def draw(self):
+        matrix = self.generate_model_matrix()
+        result = []
         for i in range(self.max_i):
             for j in range(self.max_j):
+                list = []
                 for m in range(self.num_of_models):
                     valor = matrix[m][i][j]
-                    print(valor, " ")
-                print("\n")
-            print("\n")
+                    list.append(valor)
+                list = np.array(list).reshape(3, 3)
+                result.append(list)
+
+        return np.array(result)
+
+    def generate_csv_file(self) -> None:
+        array = self.draw()
+        array = np.array(np.dstack(np.array_split(array, self.num_of_models)))
+        with open("test.csv", 'w') as file:
+            for item in array:
+                write = csv.writer(file, delimiter=',')
+                write.writerows(item)
+
+        try:
+            df = pd.read_csv("test.csv", header=None)
+        except:
+            raise Exception("Something went down while reading the .csv file.")
+
+        try:
+            plt.imshow(df, cmap='jet', interpolation='nearest', vmin=0, vmax=10)
+            plt.savefig('test.png')
+        except:
+            raise Exception("Something went down while generating the image.")
+
 
 if __name__=="__main__":
     pixelization = Pixelization("intermediary_file.csv", SnakeCurve(27, Dimension(9, 3)))
-    # print(pixelization.draw())
-    print(pixelization.generate_matrix())
-    pixelization.draw()
+    pixelization.generate_csv_file()
+    # pixelization.pad_array()
+    # print(pixelization.generate_model_matrix()[0])
+    # print(pixelization.draw().reshape((9, -3, 9), order='C'))
+    # print(pixelization.read_to_list())
+    # draw = pixelization.draw()
+    # draw = np.array_split(draw, 9)
+    # draw = np.dstack(draw)
+    # print(np.array(draw))
+
 
