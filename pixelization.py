@@ -6,6 +6,7 @@ import numpy as np
 from pandas import DataFrame
 import csv
 from matplotlib import pyplot as plt
+import math
 
 class Pixelization:
     def __init__(self, path:str, curve:Curve) -> None:
@@ -30,6 +31,7 @@ class Pixelization:
 
     #TEST: This method is not complete. Test purposes only.
     def draw(self):
+        shape:int = math.ceil(math.sqrt(self.num_of_models))
         matrix = self.generate_model_matrix()
         result = []
         for i in range(self.max_i):
@@ -38,13 +40,22 @@ class Pixelization:
                 for m in range(self.num_of_models):
                     valor = matrix[m][i][j]
                     list.append(valor)
-                list = np.array(list).reshape(3, 3)
+                list = np.array(list).reshape(shape, shape)
                 result.append(list)
 
         return np.array(result)
 
+    def pad_matrix(self):
+        matrix = self.draw()
+        padded_array = []
+        for element in matrix:
+            padded_array.append(np.pad(element, (1, 1), 'constant', constant_values=(np.nan)))
+
+        return np.array(padded_array)
+
+
     def generate_csv_file(self) -> None:
-        array = self.draw()
+        array = self.pad_matrix()
         array = np.array(np.dstack(np.array_split(array, self.num_of_models)))
         with open("test.csv", 'w') as file:
             for item in array:
@@ -65,9 +76,10 @@ class Pixelization:
 
 if __name__=="__main__":
     pixelization = Pixelization("intermediary_file.csv", SnakeCurve(27, Dimension(9, 3)))
+    # print(pixelization.pad_matrix())
     pixelization.generate_csv_file()
     # pixelization.pad_array()
-    # print(pixelization.generate_model_matrix()[0])
+    # print(pixelization.generate_model_matrix())
     # print(pixelization.draw().reshape((9, -3, 9), order='C'))
     # print(pixelization.read_to_list())
     # draw = pixelization.draw()
