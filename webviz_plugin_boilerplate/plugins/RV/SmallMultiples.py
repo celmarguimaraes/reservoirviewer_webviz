@@ -19,7 +19,7 @@ class SmallMultiples:
         # self.curve: Curve = curve
         self.colorMap = 'jet'
         print("i, j, k: ", self.max_i, self.max_j, self.num_of_models)
-        self.read_file("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//intermediary_file.csv")
+        self.final_grid = self.read_file("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//intermediary_file.csv")
 
 
     # Getters
@@ -56,6 +56,9 @@ class SmallMultiples:
 
         for m in range(self.num_of_models):
             self.draw_image(grid[m], m)
+            
+            
+        return grid 
 
 
     def draw_image(self, grid, m):

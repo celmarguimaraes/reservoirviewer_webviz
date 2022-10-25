@@ -22,6 +22,7 @@ class Configuration:
         self.hlModels = configs[14]
         self.strategies = []
         self.properties = []
+        self.final = []
 
         parseStringFirst(self, configs[11], "Property")
         parseStringFirst(self, configs[12], "Strategy")
@@ -105,6 +106,7 @@ def settingDrawConfigs(self, estrategias):
         elif (self.chartType == "smallmultiples"):
             print('small multiples')
             smallMultiples = SmallMultiples(self.folder2d, self.layoutCurve)
+            self.final = smallMultiples.final_grid
         else:
             print(
                 'Tipo de desenho não reconhecido, favor escolher entre pixelization e small multiples')
