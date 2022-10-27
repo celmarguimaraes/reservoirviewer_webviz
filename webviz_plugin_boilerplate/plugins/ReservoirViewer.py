@@ -66,7 +66,7 @@ class ReservoirViewer(WebvizPluginABC):
             self.highlightedModels]
 
         image = Path(
-            "C:/Users/k/Documents/Unicamp/IC/rv_webviz_celmar/reservoirviewer_webviz/webviz_plugin_boilerplate/plugins/RV/generated/teste0.png")
+            "C:/Users/k/Documents/Unicamp/IC/rv_webviz_celmar/reservoirviewer_webviz/webviz_plugin_boilerplate/plugins/RV/generated/teste.png")
 
         self.image_url = WEBVIZ_ASSETS.add(image)
         rvConfig = Configuration(args)
@@ -94,10 +94,7 @@ class ReservoirViewer(WebvizPluginABC):
         fig = px.imshow(self.finalGrid[1])
 
         return html.Div(
-            [
-                html.H4('Olympic medals won by countries'),
-                dcc.Graph(figure = fig),
-            ]
+            "teste imagem", style=style
         )
 
     # def plugin_callbacks():

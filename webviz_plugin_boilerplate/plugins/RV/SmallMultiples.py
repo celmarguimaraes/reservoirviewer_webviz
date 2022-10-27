@@ -1,7 +1,15 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
 import csv
 import numpy as np
+import math
+from webviz_config.webviz_assets import WEBVIZ_ASSETS
+import os
+from pathlib import Path
+
+
+
 
 
 class SmallMultiples:
@@ -54,15 +62,31 @@ class SmallMultiples:
         file_content = np.array(file_content)
         grid = file_content.reshape(self.max_i, self.max_j, self.num_of_models)
 
-        for m in range(self.num_of_models):
-            self.draw_image(grid[m], m)
+        fig, ax = plt.subplots(int(math.sqrt(self.num_of_models)), int(math.sqrt(self.num_of_models)))
+        
+        count = 0
+        for x in range(int(math.sqrt(self.num_of_models))):
+            for y in range(int(math.sqrt(self.num_of_models))):
+                ax[x, y].imshow(grid[count], cmap='jet', interpolation='none', vmin=0, vmax=10)
+                # ax[x, y].grid(grid[count])
+                # plt.colorbar()
+                count = count + 1 
+        
+        
             
+        plt.savefig("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//teste.png")
+
             
+        image = Path(
+            "C:/Users/k/Documents/Unicamp/IC/rv_webviz_celmar/reservoirviewer_webviz/webviz_plugin_boilerplate/plugins/RV/generated/teste.png")
+
+        self.image_url = WEBVIZ_ASSETS.add(image)
         return grid 
 
 
-    def draw_image(self, grid, m):
-        plt.clf()
-        plt.imshow(grid, cmap='jet', interpolation='none', vmin=0, vmax=10)
-        plt.colorbar()
-        plt.savefig("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//teste"+str(m)+".png")
+    # def draw_image(self, grid, x,y, count):
+
+        # ax[x, y].plot(grid)
+        # # plt.imshow(grid, cmap='jet', interpolation='none', vmin=0, vmax=10)
+        # plt.colorbar()
+        # plt.savefig("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//teste.png")
