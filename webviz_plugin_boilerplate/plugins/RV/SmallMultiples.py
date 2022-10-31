@@ -7,7 +7,7 @@ import math
 from webviz_config.webviz_assets import WEBVIZ_ASSETS
 import os
 from pathlib import Path
-
+from matplotlib import gridspec
 
 
 
@@ -15,7 +15,7 @@ from pathlib import Path
 class SmallMultiples:
     def __init__(self, path, curve):
         self.path = path
-        with open("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//intermediary_file.csv") as csv_file:
+        with open("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//intermediary_file.csv") as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             lineCount = 0
             for row in csv_reader:
@@ -48,11 +48,11 @@ class SmallMultiples:
 
 
     def read_file(self, path):
-        model = [[[0 for m in range(self.num_of_models)] for j in range(
-            self.max_j)] for i in range(self.max_i)]
+        file_content = []
+        
+        dimension = int(math.sqrt(self.num_of_models))
 
         with open(path) as csv_file:
-            file_content = []
             for i in range(2):
                 next(csv_file)
             for line in (csv_file):
@@ -61,24 +61,41 @@ class SmallMultiples:
 
         file_content = np.array(file_content)
         grid = file_content.reshape(self.max_i, self.max_j, self.num_of_models)
+        
 
-        fig, ax = plt.subplots(int(math.sqrt(self.num_of_models)), int(math.sqrt(self.num_of_models)))
-        
+        fig = plt.figure(figsize=(10, 10))
+
+        gs = gridspec.GridSpec(dimension, dimension,
+                            wspace=0.05, hspace=0.05)
+
         count = 0
-        for x in range(int(math.sqrt(self.num_of_models))):
-            for y in range(int(math.sqrt(self.num_of_models))):
-                ax[x, y].imshow(grid[count], cmap='jet', interpolation='none', vmin=0, vmax=10)
-                # ax[x, y].grid(grid[count])
-                # plt.colorbar()
-                count = count + 1 
+        for i in range(dimension):
+            for j in range(dimension):
+                ax = plt.subplot(gs[i, j])
+                ax.imshow(grid[count], cmap='jet',
+                        interpolation='none', vmin=0, vmax=10)
+                ax.set_facecolor('xkcd:black')
+                ax.set_xticks([])
+                ax.set_yticks([])
+                count = count + 1
+
+        # plt.colorbar()
         
         
-            
+        
+        # fig, ax = plt.subplots(dimension, dimension)
+        
+        # count = 0
+        # for x in range(dimension):
+        #     for y in range(dimension):
+        #         ax[x, y].imshow(grid[count], cmap='jet', interpolation='none', vmin=0, vmax=10)
+        #         count = count + 1 
+        
+        # # plt.colorbar()
+        
         plt.savefig("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//teste.png")
 
-            
-        image = Path(
-            "C:/Users/k/Documents/Unicamp/IC/rv_webviz_celmar/reservoirviewer_webviz/webviz_plugin_boilerplate/plugins/RV/generated/teste.png")
+        image = Path("C:/Users/k/Documents/Unicamp/IC/rv_webviz_celmar/reservoirviewer_webviz/webviz_plugin_boilerplate/plugins/RV/generated/teste.png")
 
         self.image_url = WEBVIZ_ASSETS.add(image)
         return grid 
