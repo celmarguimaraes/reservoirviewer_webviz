@@ -27,7 +27,7 @@ class SmallMultiples:
         self.final_grid = self.read_file(
             "C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//intermediary_file.csv")
         self.final_dict = {}
-        self.newGridOrder = []
+        self.new_grid_order = []
 
     # Getters
     def get_max_i(self) -> int:
@@ -45,7 +45,7 @@ class SmallMultiples:
     def read_file(self, path):
         path = "C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//intermediary_file.csv"
         file_content = []
-        countLine = 0
+        count_line = 0
 
         with open(path) as csv_file:
             for i in range(2):
@@ -56,54 +56,54 @@ class SmallMultiples:
                     file_content.append(-1)
                 else:
                     file_content.append(int(float(line.strip())))
-                countLine = countLine + 1
+                count_line = count_line + 1
 
-        print("Reservoir lines in intermediary file: ", countLine)
+        print("Reservoir lines in intermediary file: ", count_line)
         file_content = np.array(file_content)
         grid = file_content.reshape(self.num_of_models, self.max_i*self.max_j)
 
         return grid
 
-    def mergeSort(self, alist, clusterDict):
+    def mergeSort(self, alist, cluster_dict):
         if len(alist) > 1:
             mid = len(alist)//2
-            lefthalf = alist[:mid]
-            righthalf = alist[mid:]
+            left_half = alist[:mid]
+            right_half = alist[mid:]
 
-            self.mergeSort(lefthalf, clusterDict)
-            self.mergeSort(righthalf, clusterDict)
+            self.mergeSort(left_half, cluster_dict)
+            self.mergeSort(right_half, cluster_dict)
 
             i = 0
             j = 0
             k = 0
-            while i < len(lefthalf) and j < len(righthalf):
-                if clusterDict[lefthalf[i]] < clusterDict[righthalf[j]]:
-                    alist[k] = lefthalf[i]
+            while i < len(left_half) and j < len(right_half):
+                if cluster_dict[left_half[i]] < cluster_dict[right_half[j]]:
+                    alist[k] = left_half[i]
                     i = i+1
                 else:
-                    alist[k] = righthalf[j]
+                    alist[k] = right_half[j]
                     j = j+1
                 k = k+1
 
-            while i < len(lefthalf):
-                alist[k] = lefthalf[i]
+            while i < len(left_half):
+                alist[k] = left_half[i]
                 i = i+1
                 k = k+1
 
-            while j < len(righthalf):
-                alist[k] = righthalf[j]
+            while j < len(right_half):
+                alist[k] = right_half[j]
                 j = j+1
                 k = k+1
 
     def reorder_with_clusters(self, clustering):
         clustering.clusterGrid(self.final_grid)
-        self.newGridOrder = [m for m in range((self.num_of_models))]
-        clusterDict = clustering.get_dict()
-        self.mergeSort(self.newGridOrder, clusterDict)
-        self.newGridOrder = np.array(self.newGridOrder)
+        self.new_grid_order = [m for m in range((self.num_of_models))]
+        cluster_dict = clustering.get_dict()
+        self.mergeSort(self.new_grid_order, cluster_dict)
+        self.new_grid_order = np.array(self.new_grid_order)
 
-        self.final_grid = self.final_grid[self.newGridOrder]
-        self.final_dict = {k: clusterDict[k] for k in self.newGridOrder}
+        self.final_grid = self.final_grid[self.new_grid_order]
+        self.final_dict = {k: cluster_dict[k] for k in self.new_grid_order}
 
     def draw_small_multiples(self, prop_index):
         fig = plt.figure(figsize=(self.max_j, self.max_i))
@@ -139,10 +139,10 @@ class SmallMultiples:
             for sp in ax.spines.values():
                 sp.set_visible(False)
                 if (index < self.num_of_models-1):
-                    if self.final_dict[self.newGridOrder[index]] != self.final_dict[self.newGridOrder[index+1]]:
+                    if self.final_dict[self.new_grid_order[index]] != self.final_dict[self.new_grid_order[index+1]]:
                         ax.spines['right'].set_visible(True)
                 if (index < self.num_of_models-dimension):
-                    if self.final_dict[self.newGridOrder[index]] != self.final_dict[self.newGridOrder[index+dimension]]:
+                    if self.final_dict[self.new_grid_order[index]] != self.final_dict[self.new_grid_order[index+dimension]]:
                         ax.spines['bottom'].set_visible(True)
 
                 if ax.get_subplotspec().is_first_row():

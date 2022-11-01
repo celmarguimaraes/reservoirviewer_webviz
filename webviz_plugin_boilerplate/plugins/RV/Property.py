@@ -1,9 +1,9 @@
 class Property:
-	def __init__(self, root, function, folder2d, folderDistMatr, sortingAlgor, fileFeatVect):
+	def __init__(self, root, function, folder2d, folder_Dist_Matr, sortingAlgor, fileFeatVect):
 		self.root = root
 		self.function = function
 		self.folder2d = folder2d
-		self.fileDistMatr = folderDistMatr
+		self.fileDistMatr = folder_Dist_Matr
 		self.sortingAlgor = sortingAlgor
 		self.fileFeatVect = fileFeatVect
 

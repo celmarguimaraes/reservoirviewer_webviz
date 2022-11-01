@@ -5,52 +5,54 @@ import numpy as np
 
 
 class Clustering:
-    def __init__(self, method, distMatrix, minClusters, maxClusters, numIter):
+    def __init__(self, method, dist_matrix, min_clusters, max_clusters, numIter):
         self.method = method
-        self.distMatrix = distMatrix
-        self.minClusters = minClusters
-        self.maxClusters = maxClusters
-        self.numIterations = numIter
-        self.clusterDict = {}
+        self.dist_matrix = dist_matrix
+        self.min_clusters = min_clusters
+        self.max_clusters = max_clusters
+        self.num_iterations = numIter
+        self.cluster_dict = {}
         
-        print("Min clusters, max Clusters: ", self.minClusters," ", self.maxClusters)
         
         print()
 
     def getMethod(self): return self.method 
-    def getDistMatrix(self): return self.distMatrix 
+    def getdist_matrix(self): return self.dist_matrix 
     def getMin(self): return self.min 
     def getMax(self): return self.max 
-    def get_dict(self): return self.clusterDict 
-    def getNumIterations(self): return self.numIterations 
+    def get_dict(self): return self.cluster_dict 
+    def getnum_iterations(self): return self.num_iterations 
 
     def clusterGrid(self, grid):
-        distortions = []
+        print('Clustering Grid')
+        print("Min clusters: ", self.min_clusters,", max Clusters: ", self.max_clusters)
         inertias = []
-        mapping1 = {}
-        mapping2 = {}
-        K = range(self.minClusters, self.maxClusters)
-        inertiaAcumulada = 0
-        bestK = 0
+        map_inertia = {}
+        K = range(self.min_clusters, self.max_clusters)
+        accumulated_inertia = 0
+        best_k = 0
         
         for k in K:
             # Building and fitting the model
-            kmeanModel = KMeans(n_clusters=k).fit(grid)
-            inertias.append(kmeanModel.inertia_)
-            mapping2[k] = kmeanModel.inertia_
+            kmean_model = KMeans(n_clusters=k).fit(grid)
+            inertias.append(kmean_model.inertia_)
+            map_inertia[k] = kmean_model.inertia_
             
-        for idx, k in enumerate(mapping2):
-            inertiaAcumulada = np.sum(inertias[0:idx])
-            inercias = np.sum(inertias)
+        for idx, k in enumerate(map_inertia):
+            # Choosing best K
+            accumulated_inertia = np.sum(inertias[0:idx])
+            inertias_sum = np.sum(inertias)
             
-            if (inertiaAcumulada/inercias >= 0.85 ):
-                bestK = k
+            if (accumulated_inertia/inertias_sum >= 0.85 ):
+                best_k = k
                 break
         
-        kmeanModel = KMeans(n_clusters=bestK).fit(grid)
-        kmeanModel.fit(grid)
-        y_kmeans = kmeanModel.predict(grid)
+        # Clustering with best K
+        kmean_model = KMeans(n_clusters=best_k).fit(grid)
+        kmean_model.fit(grid)
+        y_kmeans = kmean_model.predict(grid)
 
         for idx, g in enumerate(grid):
-            self.clusterDict[idx] = y_kmeans[idx]
+            # Generate a dict with the cluster of each model
+            self.cluster_dict[idx] = y_kmeans[idx] 
             

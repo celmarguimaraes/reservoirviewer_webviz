@@ -11,16 +11,16 @@ class Configuration:
         self.root = configs[0]
         self.benchmark = configs[1]
         self.folder2d = configs[2]
-        self.folderDistMatr = configs[3]
-        self.chartType = configs[4]
-        self.layoutCurve = configs[5]
-        self.clustMethod = configs[6]
-        self.distMatrix = configs[7]
-        self.minClusters = int(configs[8])
-        self.maxClusters = int(configs[9])
-        self.numIterations = int(configs[10])
-        self.allModels = configs[19]
-        self.hlModels = configs[20]
+        self.folder_Dist_Matr = configs[3]
+        self.chart_type = configs[4]
+        self.layout_curve = configs[5]
+        self.clust_method = configs[6]
+        self.dist_matrix = configs[7]
+        self.min_clusters = int(configs[8])
+        self.max_clusters = int(configs[9])
+        self.num_iterations = int(configs[10])
+        self.all_models = configs[19]
+        self.hl_models = configs[20]
         self.properties = []
         self.strategies = []
 
@@ -57,33 +57,30 @@ def createWellList(self):
 def settingDrawConfigs(self, estrategias):
     for propIndex, p in enumerate(self.properties):
         print("pegando propriedade")
-        distMatrixFileName = self.distMatrix
-        print(distMatrixFileName)
         meanType = p.convertMeanType()
         clustering = None
-        # TODO this.loadStaticMapModels(propName, self.root/self.file2d/self.getNullBlocks, meanType)
-        if (distMatrixFileName == "MODELS3D_ALL_PROP" or distMatrixFileName == "MODELS3D_PROP"):
+        # TODO this.loadStaticMapModels(propName, self.root/self.file2d/self.getNullBlocks, meanType) (parte do iza)
+        if (self.dist_matrix == "MODELS3D_ALL_PROP" or self.dist_matrix == "MODELS3D_PROP"):
+            print("Distance Matrix: Feature Vectors")
 
             # TODO FAZER FILE WRITER
-            distMatrixPath = self.root + "/" + self.folderDistMatr + "/" + distMatrixFileName
-            clustering = Clustering(self.clustMethod, self.distMatrix, self.minClusters, self.maxClusters, self.numIterations)
-            # TODO Clustering clusteringData = self.clusterConfig.clusterReservoirsMatrixFile(distMatrixPath, false)
-            # TODO self.clusterConfig.reorderReservoirByClusters(clusteringData)
+            dist_matrixPath = self.root + "/" + self.folder_Dist_Matr + "/" + self.dist_matrix
+            clustering = Clustering(self.clust_method, self.dist_matrix, self.min_clusters, self.max_clusters, self.num_iterations)
 
-        elif (distMatrixFileName == "FEATVECTORS_PROP"):
+        elif (self.dist_matrix == "FEATVECTORS_PROP"):
+            print("Distance Matrix: Feature Vectors")
 
             # TODO FAZER FILE WRITER
 
             # TODO featureVecFile = self.clusteringConfig.createReservoirFeatureVecMatrix()
             # TODO Clustering clusteringData = self.clusterConfig.clusterReservoirsFeatMatrix(featureVecFile)
             # TODO self.clusterConfig.reorderReservoirByClusters(clusteringData)
-            print("Feature Vectors")
 
-        if (self.chartType == "pixelization"):
-            print('pixelization')
-        elif (self.chartType == "smallmultiples"):
-            print('small multiples')
-            smallMultiples = SmallMultiples(self.folder2d, self.layoutCurve)
+        if (self.chart_type == "pixelization"):
+            print('Executing Pixelization')
+        elif (self.chart_type == "smallmultiples"):
+            print('Executing Small Multiples')
+            smallMultiples = SmallMultiples(self.folder2d, self.layout_curve)
             smallMultiples.reorder_with_clusters(clustering)
             smallMultiples.draw_small_multiples(propIndex)
         else:
