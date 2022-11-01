@@ -4,6 +4,7 @@ import matplotlib
 import csv
 import numpy as np
 import math
+import os
 from webviz_config.webviz_assets import WEBVIZ_ASSETS
 from pathlib import Path
 from matplotlib import gridspec
@@ -12,7 +13,7 @@ from matplotlib import gridspec
 class SmallMultiples:
     def __init__(self, path, curve):
         self.path = path
-        with open("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//intermediary_file.csv") as csv_file:
+        with open(path) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=',')
             lineCount = 0
             for row in csv_reader:
@@ -24,8 +25,7 @@ class SmallMultiples:
         # self.curve: Curve = curve
         self.colorMap = 'jet'
         print("i, j, k: ", self.max_i, self.max_j, self.num_of_models)
-        self.final_grid = self.read_file(
-            "C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//intermediary_file.csv")
+        self.final_grid = self.read_file(path)
         self.final_dict = {}
         self.new_grid_order = []
 
@@ -43,7 +43,6 @@ class SmallMultiples:
     #     return self.curve
 
     def read_file(self, path):
-        path = "C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//intermediary_file.csv"
         file_content = []
         count_line = 0
 
@@ -134,17 +133,20 @@ class SmallMultiples:
 
         all_axes = fig.get_axes()
 
-        # show only the outside spines
+        # Delimit the clusters
         for index, ax in enumerate(all_axes):
             for sp in ax.spines.values():
                 sp.set_visible(False)
                 if (index < self.num_of_models-1):
                     if self.final_dict[self.new_grid_order[index]] != self.final_dict[self.new_grid_order[index+1]]:
                         ax.spines['right'].set_visible(True)
+                        ax.spines['right'].set_linestyle('dashed')
                 if (index < self.num_of_models-dimension):
                     if self.final_dict[self.new_grid_order[index]] != self.final_dict[self.new_grid_order[index+dimension]]:
                         ax.spines['bottom'].set_visible(True)
+                        ax.spines['bottom'].set_linestyle('dashed')
 
+                # Border of the image
                 if ax.get_subplotspec().is_first_row():
                     ax.spines['top'].set_visible(True)
                 if ax.get_subplotspec().is_last_row():
@@ -154,4 +156,9 @@ class SmallMultiples:
                 if ax.get_subplotspec().is_last_col():
                     ax.spines['right'].set_visible(True)
 
-        plt.savefig("C://Users//k//Documents//Unicamp//IC//rv_webviz_celmar//reservoirviewer_webviz//webviz_plugin_boilerplate//plugins//RV//generated//sm"+str(prop_index)+".png")
+
+        full_path = os.path.realpath(__file__)
+        path = os.path.dirname(full_path) + "//generated//sm"+str(prop_index)+".png"
+        print("Path of the generated file: ",path)
+        
+        plt.savefig(path)

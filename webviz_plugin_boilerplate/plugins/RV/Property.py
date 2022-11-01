@@ -1,14 +1,17 @@
 class Property:
-	def __init__(self, root, function, folder2d, folder_Dist_Matr, sortingAlgor, fileFeatVect):
-		self.root = root
+	def __init__(self, name, function, file2d, folder_Dist_Matr, sortingAlgor, fileFeatVect):
+		self.name = name
 		self.function = function
-		self.folder2d = folder2d
+		self.file2d = file2d
 		self.fileDistMatr = folder_Dist_Matr
 		self.sortingAlgor = sortingAlgor
 		self.fileFeatVect = fileFeatVect
+  
+	def getFile2d(self):
+		return (self.file2d)
 
 	def getProperty(self):
-		return (self.root+" "+self.function+" "+self.folder2d)
+		return (self.name+" "+self.function+" "+self.file2d)
 
 	def convertMeanType(self):
 		if self.function[0] == 'M':

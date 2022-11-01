@@ -75,12 +75,12 @@ def settingDrawConfigs(self, estrategias):
             # TODO featureVecFile = self.clusteringConfig.createReservoirFeatureVecMatrix()
             # TODO Clustering clusteringData = self.clusterConfig.clusterReservoirsFeatMatrix(featureVecFile)
             # TODO self.clusterConfig.reorderReservoirByClusters(clusteringData)
-
+        file_2d_path = self.root + "//" + self.folder2d + "//" + p.getFile2d()
         if (self.chart_type == "pixelization"):
             print('Executing Pixelization')
         elif (self.chart_type == "smallmultiples"):
             print('Executing Small Multiples')
-            smallMultiples = SmallMultiples(self.folder2d, self.layout_curve)
+            smallMultiples = SmallMultiples(file_2d_path, self.layout_curve)
             smallMultiples.reorder_with_clusters(clustering)
             smallMultiples.draw_small_multiples(propIndex)
         else:

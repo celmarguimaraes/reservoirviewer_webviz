@@ -27,7 +27,7 @@ class ReservoirViewer(WebvizPluginABC):
         self.input_max_clusters = "input-max_clusters"
         self.input_iterations = "input-iterations"
         self.input_property_name = "input-property-name"
-        self.input_property_file = "input-property-file"
+        self.input_property_function = "input-property-file"
         self.input_property_file_2d = "input-property-file-2d"
         self.input_property_dist_matrix = "input-property-dist-matrix"
         self.input_property_sorting_alg = "input-property-sorting-alg"
@@ -42,25 +42,25 @@ class ReservoirViewer(WebvizPluginABC):
         self.input_list = {
                         self.input_root: "root path",
                         self.input_benchmark: "benchmark",
-                        self.input_folder2d: "export 2d folder name",
+                        self.input_folder2d: "name of 2d file folder",
                         self.input_folder_Dist_Matr: "distance matrix folder name",
-                        self.input_chart_type: "chart type",
-                        self.input_layout_curve: "layout curve",
-                        self.input_clustering_method: "clustering method",
-                        self.input_distance_matrix: "distance matrix path",
+                        self.input_chart_type: "chart type (pixelization/smallmultiples)",
+                        self.input_layout_curve: "layout curve (none)",
+                        self.input_clustering_method: "clustering method (only xmeans)",
+                        self.input_distance_matrix: "distance matrix (MODELS3D_ALL_PROP/MODELS3D_ PROP/FEATVECTORS_PROP)",
                         self.input_min_clusters: "minimum number of clusters",
                         self.input_max_clusters: "maximum number of clusters",
                         self.input_iterations: "number of iterations",
-                        self.input_property_name: "property name",
-                        self.input_property_file: "property file",
-                        self.input_property_file_2d: "property file-2d",
-                        self.input_property_dist_matrix: "property distance matrix file",
-                        self.input_property_sorting_alg: "property sorting algorithm" ,
-                        self.input_property_file_feat_vect: "property feature vectors file",
-                        self.input_strategy_name: "strategy name",
-                        self.input_strategy_folder: "strategy folder",
-                        self.input_all_models: "all models txt file",
-                        self.input_highlighted_models: "highlighted models file"}
+                        self.input_property_name: "property: name",
+                        self.input_property_function: "property: coordinate suppression function (ex: MIN, MAX, SUM)",
+                        self.input_property_file_2d: "property: name of file-2d (ex: intermediary_file.csv)",
+                        self.input_property_dist_matrix: "property: name of distance matrix file",
+                        self.input_property_sorting_alg: "property: name of sorting algorithm" ,
+                        self.input_property_file_feat_vect: "property: name of feature vectors file",
+                        self.input_strategy_name: "strategy: name",
+                        self.input_strategy_folder: "strategy: path to folder",
+                        self.input_all_models: "name of txt file with all models",
+                        self.input_highlighted_models: "name of highlighted models file"}
 
         self.set_callbacks()
 
@@ -69,7 +69,7 @@ class ReservoirViewer(WebvizPluginABC):
         style = {
             "height": f"2.5em",
             "align-items": "center",
-            "margin": "1em"
+            "margin": "0.8em"
         }
         
         div_style = {
@@ -88,7 +88,7 @@ class ReservoirViewer(WebvizPluginABC):
                              self.input_list[i]),
                          debounce=False,
                          autoComplete="on",
-                         required=True,
+                         required=False,
                          size="60",
                          style=style,
                          ),
@@ -96,7 +96,9 @@ class ReservoirViewer(WebvizPluginABC):
             ]),
 
             html.Br(),
+            html.Div([
             html.Button(id=self.button_id, n_clicks=0, children="Submit"),
+            html.Div(id=self.div_id, children="Image will appear below"),]),
             html.Div(id=self.div_id),
 
         ])
@@ -111,21 +113,21 @@ class ReservoirViewer(WebvizPluginABC):
                 Input(self.input_clustering_method, "value"), Input(self.input_distance_matrix, "value"), 
                 Input(self.input_min_clusters, "value"), Input(self.input_max_clusters, "value"),
                 Input(self.input_iterations, "value"), Input(self.input_property_name, "value"),
-                Input(self.input_property_dist_matrix, "value"), Input(self.input_property_file, "value"),
-                Input(self.input_property_file_2d, "value"), Input(self.input_property_sorting_alg, "value"),
-                 Input(self.input_property_file_feat_vect, "value"), Input(self.input_strategy_name, "value"), 
+                Input(self.input_property_function, "value"),Input(self.input_property_file_2d, "value"), 
+                Input(self.input_property_dist_matrix, "value"), Input(self.input_property_sorting_alg, "value"),
+                Input(self.input_property_file_feat_vect, "value"), Input(self.input_strategy_name, "value"), 
                 Input(self.input_strategy_folder, "value"), Input(self.input_all_models, "value"),
                 Input( self.input_highlighted_models, "value"), Input((self.button_id), "n_clicks")
              ]
         )
         def update_text(root: Path,
                         benchmark: str,
-                        folder2d: Path,
-                        folder_Dist_Matr: Path,
+                        folder2d: str,
+                        folder_Dist_Matr: str,
                         chart_type: str,
                         layout_curve: str,
                         clustering_method: str,
-                        distance_matrix: Path,
+                        distance_matrix: str,
                         min_clusters: int,
                         max_clusters: int,
                         iterations: int,
@@ -137,7 +139,7 @@ class ReservoirViewer(WebvizPluginABC):
                         property_file_feat_vect: str,
                         strategy_name: str,
                         strategy_folder: str,
-                        all_models: Path,
+                        all_models: str,
                         highlighted_models: str,
                         button: int):
             if (self.button_id == ctx.triggered_id): # if the submit button is clicked
@@ -190,8 +192,11 @@ class ReservoirViewer(WebvizPluginABC):
 
                 rvConfig = Configuration(args)
                 
+                full_path = os.path.realpath(__file__)
+                        
                 if(self.chart_type == "smallmultiples"):
-                    image = Path("C:/Users/k/Documents/Unicamp/IC/rv_webviz_celmar/reservoirviewer_webviz/webviz_plugin_boilerplate/plugins/RV/generated/sm0.png")
+                    path = os.path.dirname(full_path) + "//generated//sm"+str(0)+".png"
+                    image = Path(path)
                     self.image_url = WEBVIZ_ASSETS.add(image)
                            
                 div_style = {

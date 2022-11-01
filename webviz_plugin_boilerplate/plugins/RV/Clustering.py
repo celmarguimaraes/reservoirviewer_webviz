@@ -12,9 +12,6 @@ class Clustering:
         self.max_clusters = max_clusters
         self.num_iterations = numIter
         self.cluster_dict = {}
-        
-        
-        print()
 
     def getMethod(self): return self.method 
     def getdist_matrix(self): return self.dist_matrix 
