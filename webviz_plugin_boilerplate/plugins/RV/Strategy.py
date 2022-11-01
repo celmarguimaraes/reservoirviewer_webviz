@@ -1,7 +1,7 @@
 class Strategy:
-    def __init__(self, sSplit):
-        self.name = sSplit[0]
-        self.path = sSplit[1]
+    def __init__(self, name, path):
+        self.name = name
+        self.path = path
 
     def getStrategy(self):
         return (self.name+" "+self.path)

@@ -1,12 +1,11 @@
 class Property:
-	def __init__(self, sSplit):
-		self.root = sSplit[0]
-		self.function = sSplit[1]
-		self.folder2d = sSplit[2]
-		self.fileDistMatr = sSplit[3]
-		self.sortingAlgor = sSplit[4]
-		self.fileFeatVect = sSplit[5]
-		# print(self.root, self.function, self.folder2d)
+	def __init__(self, root, function, folder2d, folderDistMatr, sortingAlgor, fileFeatVect):
+		self.root = root
+		self.function = function
+		self.folder2d = folder2d
+		self.fileDistMatr = folderDistMatr
+		self.sortingAlgor = sortingAlgor
+		self.fileFeatVect = fileFeatVect
 
 	def getProperty(self):
 		return (self.root+" "+self.function+" "+self.folder2d)

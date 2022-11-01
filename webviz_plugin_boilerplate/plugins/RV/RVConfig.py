@@ -3,6 +3,7 @@ from .Strategy import Strategy
 from .Property import Property
 from .WellList import WellList
 from .SmallMultiples import SmallMultiples
+from .Clustering import Clustering
 
 
 class Configuration:
@@ -13,19 +14,18 @@ class Configuration:
         self.folderDistMatr = configs[3]
         self.chartType = configs[4]
         self.layoutCurve = configs[5]
-        self.lustMethod = configs[6]
+        self.clustMethod = configs[6]
         self.distMatrix = configs[7]
         self.minClusters = int(configs[8])
         self.maxClusters = int(configs[9])
         self.numIterations = int(configs[10])
-        self.allModels = configs[13]
-        self.hlModels = configs[14]
-        self.strategies = []
+        self.allModels = configs[19]
+        self.hlModels = configs[20]
         self.properties = []
-        self.final = []
+        self.strategies = []
 
-        parseStringFirst(self, configs[11], "Property")
-        parseStringFirst(self, configs[12], "Strategy")
+        self.properties.append(Property(configs[11], configs[12], configs[13], configs[14], configs[15], configs[16]))
+        self.strategies.append(Strategy(configs[17],configs[18]))
 
         settingDrawConfigs(self, self.strategies)
 
@@ -38,30 +38,7 @@ def getStrategies(self):
 def getProperties(self):
     for prop in self.properties:
         print("Propriedade: "+prop.getProperty())
-
-
-def parseStringFirst(self, strats, typeOfRegex):
-    stringStrats = strats
-    arrayStrats = []
-
-    arrayStrats = eval(f"{stringStrats}")
-    for strat in arrayStrats:
-        parseStringSecond(self, strat, typeOfRegex)
-
-
-def parseStringSecond(self, strats, typeOfRegex):
-    stringStrats = strats
-    arrayStrats = []
-
-    arrayStrats = stringStrats.split(";")
-
-    if (typeOfRegex == "Property"):
-        property = Property(arrayStrats)
-        self.properties.append(property)
-    elif (typeOfRegex == "Strategy"):
-        strategy = Strategy(arrayStrats)
-        self.strategies.append(strategy)
-
+        
 
 def createWellList(self):
     estrategias = []
@@ -77,18 +54,19 @@ def createWellList(self):
     return estrategias
 
 
-# TODO LEMBRAR DE MUDAR NOME (PENSAR EM UM NOME DECENTE)
 def settingDrawConfigs(self, estrategias):
-    for p in self.properties:
+    for propIndex, p in enumerate(self.properties):
         print("pegando propriedade")
         distMatrixFileName = self.distMatrix
+        print(distMatrixFileName)
         meanType = p.convertMeanType()
+        clustering = None
         # TODO this.loadStaticMapModels(propName, self.root/self.file2d/self.getNullBlocks, meanType)
         if (distMatrixFileName == "MODELS3D_ALL_PROP" or distMatrixFileName == "MODELS3D_PROP"):
 
             # TODO FAZER FILE WRITER
             distMatrixPath = self.root + "/" + self.folderDistMatr + "/" + distMatrixFileName
-
+            clustering = Clustering(self.clustMethod, self.distMatrix, self.minClusters, self.maxClusters, self.numIterations)
             # TODO Clustering clusteringData = self.clusterConfig.clusterReservoirsMatrixFile(distMatrixPath, false)
             # TODO self.clusterConfig.reorderReservoirByClusters(clusteringData)
 
@@ -106,7 +84,8 @@ def settingDrawConfigs(self, estrategias):
         elif (self.chartType == "smallmultiples"):
             print('small multiples')
             smallMultiples = SmallMultiples(self.folder2d, self.layoutCurve)
-            self.final = smallMultiples.final_grid
+            smallMultiples.reorder_with_clusters(clustering)
+            smallMultiples.draw_small_multiples(propIndex)
         else:
             print(
                 'Tipo de desenho não reconhecido, favor escolher entre pixelization e small multiples')
