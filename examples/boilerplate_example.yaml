@@ -1,0 +1,51 @@
+# ------------------------------
+options:
+  menu:
+    show_logo: true
+    bar_position: left
+    drawer_position: left
+    initially_pinned: true
+    initially_collapsed: true
+
+# ------------------------------
+layout:
+  - section: Webviz Boilerplate
+    content:
+      # ------------------------------
+
+      - page: Front page
+        icon: home
+        content:
+          - This is a `webviz` instance created from a configuration file.
+          - Open menu on the left to select page for demo plugins.
+
+  - section: Example Plugins
+    content:
+      - group: Simple Plugins
+        icon: label
+        content:
+          - page: Some custom plugin
+            content:
+            - ReservoirViewer:
+                root: root/root/blabla
+                benchmark: benchmarck 
+                folder2d: intermediary_file.csv 
+                folderDistMatr: folder 
+                chartType: smallmultiples 
+                layoutCurve: snake 
+                clusteringMethod: clustm 
+                distanceMatrix: distmat 
+                minClusters: 10 
+                maxClusters: 15 
+                iterations: 20 
+                properties: 
+                  - prop;function1;folder2d1;fileDistMatr;sortingAlgor;fileFeatVect1
+                  - prop3;1;1;1;1;1 
+                  - prop2;function2;folder2d2;fileDistMatr2;sortingAlgor2;fileFeatVect2 
+                  - prop4;1;1;1;1;1
+                strategies: 
+                  - Estrategia de Plano;pasta/subpasta/subsubpasta
+                  - strat;21
+                  - strat2;uuu
+                allModels: allmodroot/root 
+                highlightedModels: hogh 
