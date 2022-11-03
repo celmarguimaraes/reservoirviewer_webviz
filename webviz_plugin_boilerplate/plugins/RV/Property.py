@@ -1,15 +1,17 @@
 class Property:
-	def __init__(self, sSplit):
-		self.root = sSplit[0]
-		self.function = sSplit[1]
-		self.folder2d = sSplit[2]
-		self.fileDistMatr = sSplit[3]
-		self.sortingAlgor = sSplit[4]
-		self.fileFeatVect = sSplit[5]
-		# print(self.root, self.function, self.folder2d)
+	def __init__(self, name, function, file2d, file_dist_matr, sorting_algor, file_feat_vector):
+		self.name = name
+		self.function = function
+		self.file2d = file2d
+		self.file_dist_matr = file_dist_matr
+		self.sorting_algor = sorting_algor
+		self.file_feat_vector = file_feat_vector
+  
+	def getFile2d(self):
+		return (self.file2d)
 
 	def getProperty(self):
-		return (self.root+" "+self.function+" "+self.folder2d)
+		return (self.name+" "+self.function+" "+self.file2d)
 
 	def convertMeanType(self):
 		if self.function[0] == 'M':
