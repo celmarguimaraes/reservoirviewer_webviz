@@ -1,16 +1,12 @@
-# from dimension import Dimension
 import pandas as pd
 import numpy as np
 from pandas import DataFrame
-import csv
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 import math
 
 class Pixelization:
     def __init__(self, path:str) -> None:
         self.path = path
-        #NOTE: This is throwing a warning because the column is read as data
         self.file = DataFrame(pd.read_csv(path))
         self.max_i:int = int(pd.to_numeric(self.file.columns[0]))
         self.max_j:int = int(pd.to_numeric(self.file.columns[1]))
@@ -29,13 +25,14 @@ class Pixelization:
 
         try:
             column = DataFrame(self.file[self.file.columns[0]]).squeeze().tolist()
+            # return [np.float16(item) for item in column][::-1]
             return [np.float16(item) for item in column]
         except:
             raise Exception('Something went wrong when trying to read the file.')
 
     def generate_model_matrix(self):
         """
-        #NOTE: Each matrix inside needs to be squared
+        NOTE: Each matrix inside needs to be squared
         Separates the list into sublists of the same model.
 
         Returns:
@@ -67,6 +64,7 @@ class Pixelization:
                     valor = matrix[m][i][j]
                     list.append(valor)
                 list = np.pad(list, ((prev, next)), 'constant', constant_values=(np.nan))
+                # list = np.array(list).reshape(shape, shape)[::-1]
                 list = np.array(list).reshape(shape, shape)
                 result.append(list)
 
@@ -94,19 +92,20 @@ class Pixelization:
         Returns:
             None.
         """
-        array = self.pad_matrix()
+        # array = self.pad_matrix()[::-1]
+        array = np.flip(self.pad_matrix(), 0)
         array = np.array(np.dstack(np.array_split(array, self.max_i)))
         array = array.reshape(array.shape[0] * array.shape[1], array.shape[2])
 
         try:
             plt.figure(figsize=(self.max_j, self.max_i), layout="constrained")
-            plt.imshow(array[::-1], cmap='jet', vmin=0, vmax=256)
+            plt.imshow(np.flip(array, 1), cmap='jet', vmin=0, vmax=1)
             plt.savefig('/home/izael/git/rvweb-python/tests_files/test_file.png')
         except:
             raise Exception("Something went down while generating the image.")
 
 
 if __name__=="__main__":
-    pixelization = Pixelization("/home/izael/git/rvweb-python/tests_files/arithmetic-mean.csv")
+    pixelization = Pixelization("/home/izael/git/rvweb-python/tests_files/sw_new_file.csv")
     pixelization.generate_image()
 
