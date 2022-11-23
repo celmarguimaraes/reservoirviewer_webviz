@@ -35,13 +35,3 @@ class SnakeCurve(Curve):
        d = math.ceil(math.sqrt(number_of_elements))
        return Dimension(d, d)
 
-#TEST:Testing to see if it works.
-if __name__ == '__main__':
-    snake_curve:Curve = SnakeCurve(25, Dimension(5, 5))
-    
-    for i in range(snake_curve.get_number_of_elements()):
-        coord:Coordinate = snake_curve.get_coordinate(i)
-        print(f'k = {i} --> ({coord.get_x()}, {coord.get_y()})')
-
-
-

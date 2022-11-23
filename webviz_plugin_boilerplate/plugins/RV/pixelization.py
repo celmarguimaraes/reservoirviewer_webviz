@@ -59,13 +59,14 @@ class Pixelization:
         result = []
         for i in range(self.max_i):
             for j in range(self.max_j):
-                list = [] #NOTE: Com base nesse vetor eu vou usar a curva.
+                list = []
                 for m in range(self.num_of_models):
                     valor = matrix[m][i][j]
                     list.append(valor)
                 list = np.pad(list, ((prev, next)), 'constant', constant_values=(np.nan))
-                # list = np.array(list).reshape(shape, shape)[::-1]
                 list = np.array(list).reshape(shape, shape)
+                # list = np.array(list).reshape(shape, shape)[::-1]
+                list[1::2] = np.fliplr(list[1::2]) # Flip every row with odd index - Snake Curve
                 result.append(list)
 
         return np.array(result)
