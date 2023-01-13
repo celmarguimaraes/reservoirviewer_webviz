@@ -79,14 +79,18 @@ class Pixelization:
             Numpy array with NaN elements on the edges.
         """
         matrix = self.draw()
-        padded_array = []
+        padded_array = list()
         for element in matrix:
             padded_array.append(np.pad(element, ((1, 1)), 'constant', constant_values=(np.nan)))
 
         return np.array(padded_array)
 
+    def get_min_and_max(self):
+        list = self.read_to_list()
+        return (np.nanmin(list), np.nanmax(list))
 
-    def generate_image(self) -> None:
+
+    def generate_image(self, path: str) -> None:
         """
         It generates and save the image based on the matrix (multidimensional array) received.
 
@@ -97,16 +101,12 @@ class Pixelization:
         array = np.flip(self.pad_matrix(), 0)
         array = np.array(np.dstack(np.array_split(array, self.max_i)))
         array = array.reshape(array.shape[0] * array.shape[1], array.shape[2])
+        values = self.get_min_and_max()
 
         try:
             plt.figure(figsize=(self.max_j, self.max_i), layout="constrained")
-            plt.imshow(np.flip(array, 1), cmap='jet', vmin=0, vmax=1)
-            plt.savefig('/home/izael/git/rvweb-python/tests_files/test_file.png')
+            plt.imshow(np.flip(array, 1), cmap='jet', vmin=values[0], vmax=values[1])
+            plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")
-
-
-if __name__=="__main__":
-    pixelization = Pixelization("/home/izael/git/rvweb-python/tests_files/sw_new_file.csv")
-    pixelization.generate_image()
 

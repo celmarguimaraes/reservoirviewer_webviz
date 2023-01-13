@@ -38,6 +38,7 @@ class ReservoirViewer(WebvizPluginABC):
         self.input_highlighted_models = "input-highlighted_models"
         self.button_id = "submit-button"
         self.div_id = "output-state}"
+        self.input_directory_save = "directory-save"
 
         self.input_list = {
                         self.input_root: "root path",
@@ -60,7 +61,8 @@ class ReservoirViewer(WebvizPluginABC):
                         self.input_strategy_name: "strategy: name",
                         self.input_strategy_folder: "strategy: path to folder",
                         self.input_all_models: "name of txt file with all models",
-                        self.input_highlighted_models: "name of highlighted models file"}
+                        self.input_highlighted_models: "name of highlighted models file",
+                        self.input_directory_save: "directory to save generated image"}
 
         self.set_callbacks()
 
@@ -117,7 +119,8 @@ class ReservoirViewer(WebvizPluginABC):
                 Input(self.input_property_dist_matrix, "value"), Input(self.input_property_sorting_alg, "value"),
                 Input(self.input_property_file_feat_vect, "value"), Input(self.input_strategy_name, "value"), 
                 Input(self.input_strategy_folder, "value"), Input(self.input_all_models, "value"),
-                Input( self.input_highlighted_models, "value"), Input((self.button_id), "n_clicks")
+                Input( self.input_highlighted_models, "value"), Input((self.button_id), "n_clicks"),
+                Input( self.input_directory_save, "value")
              ]
         )
         def update_text(root: Path,
@@ -141,7 +144,8 @@ class ReservoirViewer(WebvizPluginABC):
                         strategy_folder: str,
                         all_models: str,
                         highlighted_models: str,
-                        button: int):
+                        button: int,
+                        directory_save: str):
             if (self.button_id == ctx.triggered_id): # if the submit button is clicked
 
                 self.root = root
@@ -165,6 +169,7 @@ class ReservoirViewer(WebvizPluginABC):
                 self.strategy_folder = strategy_folder
                 self.all_models = all_models
                 self.highlighted_models = highlighted_models
+                self.directory_save = directory_save
 
                 args = [
                     self.root,
@@ -187,8 +192,8 @@ class ReservoirViewer(WebvizPluginABC):
                     self.strategy_name,
                     self.strategy_folder,
                     self.all_models,
-                    self.highlighted_models]
-
+                    self.highlighted_models,
+                    self.directory_save]
 
                 rvConfig = Configuration(args)
                 
@@ -196,6 +201,12 @@ class ReservoirViewer(WebvizPluginABC):
                         
                 if(self.chart_type == "smallmultiples"):
                     path = os.path.dirname(full_path) + "//generated//sm"+str(0)+".png"
+                    image = Path(path)
+                    self.image_url = WEBVIZ_ASSETS.add(image)
+
+                if(self.chart_type == "pixelization"):
+                    print(os.path.dirname(full_path))
+                    path = os.path.dirname(full_path) + "/generated/px"+str(0)+".png"
                     image = Path(path)
                     self.image_url = WEBVIZ_ASSETS.add(image)
                            

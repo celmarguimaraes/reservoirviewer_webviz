@@ -3,6 +3,7 @@ from .Strategy import Strategy
 from .Property import Property
 from .WellList import WellList
 from .SmallMultiples import SmallMultiples
+from .pixelization import Pixelization
 from .Clustering import Clustering
 
 
@@ -23,11 +24,12 @@ class Configuration:
         self.hl_models = configs[20]
         self.properties = []
         self.strategies = []
+        self.save_dir = configs[21]
 
         self.properties.append(Property(configs[11], configs[12], configs[13], configs[14], configs[15], configs[16]))
         self.strategies.append(Strategy(configs[17],configs[18]))
 
-        settingDrawConfigs(self, self.strategies)
+        settingDrawConfigs(self)
 
 
 def getStrategies(self):
@@ -40,54 +42,38 @@ def getProperties(self):
         print("Propriedade: "+prop.getProperty())
         
 
-def createWellList(self):
-    estrategias = []
+# def createWellList(self):
+#     estrategias = []
 
-    if (~(self.strategies.empty())):
-        for strategy in self.strategies:
-            name = strategy.getName()
-            path = strategy.getPath()
-            wellList = WellList(name)
-            estrategias.push_back(wellList)
-            estrategias[i].loadFile(path)
+#     if (~(self.strategies.empty())):
+#         for strategy in self.strategies:
+#             name = strategy.getName()
+#             path = strategy.getPath()
+#             wellList = WellList(name)
+#             estrategias.append(wellList)
+#             estrategias[i].loadFile(path)
 
-    return estrategias
+#     return estrategias
 
 
-def settingDrawConfigs(self, estrategias):
+def settingDrawConfigs(self):
     for propIndex, p in enumerate(self.properties):
-        print("pegando propriedade")
-        meanType = p.convertMeanType()
+        print("Pegando Propriedade")
         clustering = None
-        # TODO this.loadStaticMapModels(propName, self.root/self.file2d/self.getNullBlocks, meanType) (parte do iza)
-        if (self.dist_matrix == "MODELS3D_ALL_PROP" or self.dist_matrix == "MODELS3D_PROP"):
-            print("Distance Matrix: Feature Vectors")
-
-            # TODO FAZER FILE WRITER
-            dist_matrixPath = self.root + "/" + self.folder_Dist_Matr + "/" + self.dist_matrix
-            clustering = Clustering(self.clust_method, self.dist_matrix, self.min_clusters, self.max_clusters, self.num_iterations)
-
-        elif (self.dist_matrix == "FEATVECTORS_PROP"):
-            print("Distance Matrix: Feature Vectors")
-
-            # TODO FAZER FILE WRITER
-
-            # TODO featureVecFile = self.clusteringConfig.createReservoirFeatureVecMatrix()
-            # TODO Clustering clusteringData = self.clusterConfig.clusterReservoirsFeatMatrix(featureVecFile)
-            # TODO self.clusterConfig.reorderReservoirByClusters(clusteringData)
-        file_2d_path = self.root + "//" + self.folder2d + "//" + p.getFile2d()
+        #TODO this.loadStaticMapModels(propName, self.root/self.file2d/self.getNullBlocks, meanType) (parte do iza)
+        file_2d_path = self.root + "/" + self.folder2d + "/" + p.getFile2d()
+        print(file_2d_path)
         if (self.chart_type == "pixelization"):
             print('Executing Pixelization')
+            pixelization = Pixelization(file_2d_path)
+            print('Look we got here somehow')
+            pixelization.generate_image(self.save_dir)
+            
         elif (self.chart_type == "smallmultiples"):
             print('Executing Small Multiples')
             smallMultiples = SmallMultiples(file_2d_path, self.layout_curve)
             smallMultiples.reorder_with_clusters(clustering)
             smallMultiples.draw_small_multiples(propIndex)
         else:
-            print(
-                'Tipo de desenho não reconhecido, favor escolher entre pixelization e small multiples')
-            # TODO  FAZER ILLEGAL EXCEPTION
+            raise Exception('Tipo de desenho não reconhecido, favor escolher entre Pixelization e Smallmultiples')
 
-    def loadStaticMapModels(self, propertyName, propertyFile, indexOfValueField):
-        # PARTE DO IZA
-        print("modelos do iza carregando")
