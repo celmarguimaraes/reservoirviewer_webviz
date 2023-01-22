@@ -4,4 +4,4 @@ class Strategy:
         self.path = path
 
     def getStrategy(self):
-        return (self.name+" "+self.path)
+        return self.name + " " + self.path

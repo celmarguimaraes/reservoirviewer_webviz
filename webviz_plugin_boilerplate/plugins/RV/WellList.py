@@ -1,41 +1,46 @@
 from .Well import Well
 from .IJMKey import IJMKey
 
+
 class WellList:
-    def __init__( strategy):
+    def __init__(strategy):
         self.strategyName = strategy
 
 
 def loadFile(path):
     values = []
     wellName = []
-    wellType =[]
-    line = ''
-    #Well well  // TODO CONSERTAR
-    #Well *nullWell = &well // TODO
+    wellType = []
+    line = ""
+    # Well well  // TODO CONSERTAR
+    # Well *nullWell = &well // TODO
     well = None
 
     file = open(path, r)
     for line in file:
         values = line.split("")
-        if (line.startswith("PRD") | line.startswith("INJ") | line.startswith("PRODUCER") | line.startswith("INJECTOR")):
+        if (
+            line.startswith("PRD")
+            | line.startswith("INJ")
+            | line.startswith("PRODUCER")
+            | line.startswith("INJECTOR")
+        ):
             wellName = values[1]
             wellType = values[0]
 
-            if wellType[0] =='P':
+            if wellType[0] == "P":
                 wellType = "PRODUCER"
                 break
-            elif wellType[0] =='I':
+            elif wellType[0] == "I":
                 wellType = "INJECTOR"
                 break
             else:
                 wellType = "UNDEFINED"
                 break
-            
 
             well = Well(wellName, wellType)
             well.getName()
-        
+
         else:
             i = int(values[0])
             j = int(values[1])
@@ -43,9 +48,7 @@ def loadFile(path):
             key = IJMKey("UNDEFINED", i, j, model)
             well.addCoordinates(key)
             well.getName()
-        
-    
-    if (well):
+
+    if well:
         well.updateBorders()
         self.wellList.push_back(well)
-    

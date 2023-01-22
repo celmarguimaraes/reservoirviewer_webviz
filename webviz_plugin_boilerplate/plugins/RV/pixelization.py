@@ -4,14 +4,15 @@ from pandas import DataFrame
 import matplotlib.pyplot as plt
 import math
 
+
 class Pixelization:
-    def __init__(self, path:str) -> None:
+    def __init__(self, path: str) -> None:
         self.path = path
         self.file = DataFrame(pd.read_csv(path))
-        self.max_i:int = int(pd.to_numeric(self.file.columns[0]))
-        self.max_j:int = int(pd.to_numeric(self.file.columns[1]))
-        self.num_of_models:int = int(pd.to_numeric(self.file.columns[2]))
-    
+        self.max_i: int = int(pd.to_numeric(self.file.columns[0]))
+        self.max_j: int = int(pd.to_numeric(self.file.columns[1]))
+        self.num_of_models: int = int(pd.to_numeric(self.file.columns[2]))
+
     def read_to_list(self) -> list:
         """
         Read a column into a list data structure.
@@ -20,7 +21,7 @@ class Pixelization:
 
         Return:
             It return a list with numpy floats of 16 bytes.
-            
+
         """
 
         try:
@@ -28,7 +29,7 @@ class Pixelization:
             # return [np.float16(item) for item in column][::-1]
             return [np.float16(item) for item in column]
         except:
-            raise Exception('Something went wrong when trying to read the file.')
+            raise Exception("Something went wrong when trying to read the file.")
 
     def generate_model_matrix(self):
         """
@@ -38,7 +39,9 @@ class Pixelization:
         Returns:
             Numpy array of shape (num_of_models, max_i, max_j)
         """
-        return np.array(self.read_to_list(), dtype=np.float64).reshape(self.num_of_models, self.max_i, self.max_j)
+        return np.array(self.read_to_list(), dtype=np.float64).reshape(
+            self.num_of_models, self.max_i, self.max_j
+        )
 
     def draw(self):
         """
@@ -52,9 +55,9 @@ class Pixelization:
         Returns:
             Numpy array with the elements reorganized.
         """
-        shape:int = math.ceil(math.sqrt(self.num_of_models))
-        prev = math.ceil(((shape ** 2) - self.num_of_models) / 2)
-        next = math.floor(((shape ** 2) - self.num_of_models) / 2)
+        shape: int = math.ceil(math.sqrt(self.num_of_models))
+        prev = math.ceil(((shape**2) - self.num_of_models) / 2)
+        next = math.floor(((shape**2) - self.num_of_models) / 2)
         matrix = self.generate_model_matrix()
         result = []
         for i in range(self.max_i):
@@ -63,10 +66,14 @@ class Pixelization:
                 for m in range(self.num_of_models):
                     valor = matrix[m][i][j]
                     list.append(valor)
-                list = np.pad(list, ((prev, next)), 'constant', constant_values=(np.nan))
+                list = np.pad(
+                    list, ((prev, next)), "constant", constant_values=(np.nan)
+                )
                 list = np.array(list).reshape(shape, shape)
                 # list = np.array(list).reshape(shape, shape)[::-1]
-                list[1::2] = np.fliplr(list[1::2]) # Flip every row with odd index - Snake Curve
+                list[1::2] = np.fliplr(
+                    list[1::2]
+                )  # Flip every row with odd index - Snake Curve
                 result.append(list)
 
         return np.array(result)
@@ -81,14 +88,15 @@ class Pixelization:
         matrix = self.draw()
         padded_array = list()
         for element in matrix:
-            padded_array.append(np.pad(element, ((1, 1)), 'constant', constant_values=(np.nan)))
+            padded_array.append(
+                np.pad(element, ((1, 1)), "constant", constant_values=(np.nan))
+            )
 
         return np.array(padded_array)
 
     def get_min_and_max(self):
         list = self.read_to_list()
         return (np.nanmin(list), np.nanmax(list))
-
 
     def generate_image(self, path: str) -> None:
         """
@@ -105,8 +113,7 @@ class Pixelization:
 
         try:
             plt.figure(figsize=(self.max_j, self.max_i), layout="constrained")
-            plt.imshow(np.flip(array, 1), cmap='jet', vmin=values[0], vmax=values[1])
+            plt.imshow(np.flip(array, 1), cmap="jet", vmin=values[0], vmax=values[1])
             plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")
-

@@ -4,6 +4,7 @@ from snake_curve import SnakeCurve
 from dimension import Dimension
 from coordinate import Coordinate
 
+
 class TestSnakeCurve(unittest.TestCase):
     def test_get_d(self):
         snake_curve = SnakeCurve(25, Dimension(5, 5))
@@ -21,6 +22,5 @@ class TestSnakeCurve(unittest.TestCase):
         self.assertEqual(snake_curve.get_coordinate(24).get_y(), 4)
 
 
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

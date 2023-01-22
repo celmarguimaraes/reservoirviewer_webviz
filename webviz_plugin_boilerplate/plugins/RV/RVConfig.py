@@ -26,21 +26,30 @@ class Configuration:
         self.strategies = []
         self.save_dir = configs[21]
 
-        self.properties.append(Property(configs[11], configs[12], configs[13], configs[14], configs[15], configs[16]))
-        self.strategies.append(Strategy(configs[17],configs[18]))
+        self.properties.append(
+            Property(
+                configs[11],
+                configs[12],
+                configs[13],
+                configs[14],
+                configs[15],
+                configs[16],
+            )
+        )
+        self.strategies.append(Strategy(configs[17], configs[18]))
 
         settingDrawConfigs(self)
 
 
 def getStrategies(self):
     for strat in self.strategies:
-        print("Estrategia: "+strat.getStrategy())
+        print("Estrategia: " + strat.getStrategy())
 
 
 def getProperties(self):
     for prop in self.properties:
-        print("Propriedade: "+prop.getProperty())
-        
+        print("Propriedade: " + prop.getProperty())
+
 
 # def createWellList(self):
 #     estrategias = []
@@ -60,20 +69,21 @@ def settingDrawConfigs(self):
     for propIndex, p in enumerate(self.properties):
         print("Pegando Propriedade")
         clustering = None
-        #TODO this.loadStaticMapModels(propName, self.root/self.file2d/self.getNullBlocks, meanType) (parte do iza)
+        # TODO this.loadStaticMapModels(propName, self.root/self.file2d/self.getNullBlocks, meanType) (parte do iza)
         file_2d_path = self.root + "/" + self.folder2d + "/" + p.getFile2d()
         print(file_2d_path)
-        if (self.chart_type == "pixelization"):
-            print('Executing Pixelization')
+        if self.chart_type == "pixelization":
+            print("Executing Pixelization")
             pixelization = Pixelization(file_2d_path)
-            print('Look we got here somehow')
+            print("Look we got here somehow")
             pixelization.generate_image(self.save_dir)
-            
-        elif (self.chart_type == "smallmultiples"):
-            print('Executing Small Multiples')
+
+        elif self.chart_type == "smallmultiples":
+            print("Executing Small Multiples")
             smallMultiples = SmallMultiples(file_2d_path, self.layout_curve)
             smallMultiples.reorder_with_clusters(clustering)
             smallMultiples.draw_small_multiples(propIndex)
         else:
-            raise Exception('Tipo de desenho não reconhecido, favor escolher entre Pixelization e Smallmultiples')
-
+            raise Exception(
+                "Tipo de desenho não reconhecido, favor escolher entre Pixelization e Smallmultiples"
+            )
