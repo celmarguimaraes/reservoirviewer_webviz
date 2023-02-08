@@ -40,11 +40,12 @@ class Clustering:
             accumulated_inertia = np.sum(inertias[0:idx])
             inertias_sum = np.sum(inertias)
             
-            if (accumulated_inertia/inertias_sum >= 0.85 ):
+            if (accumulated_inertia/inertias_sum >= 0.65 ):
                 best_k = k
                 break
         
         # Clustering with best K
+        print("Chosen number of clusters: ", best_k)
         kmean_model = KMeans(n_clusters=best_k).fit(grid)
         kmean_model.fit(grid)
         y_kmeans = kmean_model.predict(grid)

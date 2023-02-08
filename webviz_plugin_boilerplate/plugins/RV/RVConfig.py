@@ -21,6 +21,7 @@ class Configuration:
         self.num_iterations = int(configs[10])
         self.all_models = configs[19]
         self.hl_models = configs[20]
+        self.generated_folder = configs[21]
         self.properties = []
         self.strategies = []
 
@@ -80,7 +81,7 @@ def settingDrawConfigs(self, estrategias):
             print('Executing Pixelization')
         elif (self.chart_type == "smallmultiples"):
             print('Executing Small Multiples')
-            smallMultiples = SmallMultiples(file_2d_path, self.layout_curve)
+            smallMultiples = SmallMultiples(file_2d_path, self.layout_curve, self.generated_folder)
             smallMultiples.reorder_with_clusters(clustering)
             smallMultiples.draw_small_multiples(propIndex)
         else:
