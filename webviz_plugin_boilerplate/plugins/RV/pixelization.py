@@ -3,15 +3,28 @@ import numpy as np
 from pandas import DataFrame
 import matplotlib.pyplot as plt
 import math
+from curve import Curve
+from snake_curve import SnakeCurve
+from dimension import Dimension
 
 
 class Pixelization:
-    def __init__(self, path: str) -> None:
+    def __init__(self, path: str, curve: str) -> None:
         self.path = path
         self.file = DataFrame(pd.read_csv(path))
         self.max_i: int = int(pd.to_numeric(self.file.columns[0]))
         self.max_j: int = int(pd.to_numeric(self.file.columns[1]))
         self.num_of_models: int = int(pd.to_numeric(self.file.columns[2]))
+        self.curve: str = curve
+
+    def set_curve(
+        self, curve_name: str, number_of_elements: int, dimension: Dimension
+    ) -> Curve:
+        match curve_name:
+            case "snake curve":
+                return SnakeCurve(number_of_elements, dimension)
+            case _:
+                raise Exception("This curve does not exist")
 
     def read_to_list(self) -> list:
         """
@@ -59,6 +72,9 @@ class Pixelization:
         prev = math.ceil(((shape**2) - self.num_of_models) / 2)
         next = math.floor(((shape**2) - self.num_of_models) / 2)
         matrix = self.generate_model_matrix()
+        dimension = Dimension(shape, shape)
+        curve = self.set_curve(self.curve, shape * shape, dimension)
+
         result = []
         for i in range(self.max_i):
             for j in range(self.max_j):
@@ -71,9 +87,8 @@ class Pixelization:
                 )
                 list = np.array(list).reshape(shape, shape)
                 # list = np.array(list).reshape(shape, shape)[::-1]
-                list[1::2] = np.fliplr(
-                    list[1::2]
-                )  # Flip every row with odd index - Snake Curve
+                # Flip every row with odd index - Snake Curve
+                list = curve.parse_matrix(list)
                 result.append(list)
 
         return np.array(result)

@@ -25,3 +25,7 @@ class Curve(ABC):
     @abstractmethod
     def define_dimension(self, number_of_elements: int) -> Dimension:
         pass
+
+    @abstractmethod
+    def parse_matrix(self, matrix):
+        pass

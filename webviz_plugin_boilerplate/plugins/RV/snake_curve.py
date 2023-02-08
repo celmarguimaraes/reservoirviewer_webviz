@@ -1,4 +1,5 @@
 import math
+import numpy as np
 from curve import Curve
 from dimension import Dimension
 from coordinate import Coordinate
@@ -34,3 +35,7 @@ class SnakeCurve(Curve):
     def define_dimension(self, number_of_elements: int) -> Dimension:
         d = math.ceil(math.sqrt(number_of_elements))
         return Dimension(d, d)
+
+    def parse_matrix(self, matrix):
+        matrix[1::2] = np.fliplr(matrix[1::2])
+        return matrix
