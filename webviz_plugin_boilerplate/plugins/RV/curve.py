@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from coordinate import Coordinate
-from dimension import Dimension
+from .coordinate import Coordinate
+from .dimension import Dimension
 
 
 class Curve(ABC):

@@ -1,8 +1,8 @@
 import math
 import numpy as np
-from curve import Curve
-from dimension import Dimension
-from coordinate import Coordinate
+from .curve import Curve
+from .dimension import Dimension
+from .coordinate import Coordinate
 
 
 class SnakeCurve(Curve):

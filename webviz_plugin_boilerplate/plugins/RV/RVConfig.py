@@ -74,7 +74,7 @@ def settingDrawConfigs(self):
         print(file_2d_path)
         if self.chart_type == "pixelization":
             print("Executing Pixelization")
-            pixelization = Pixelization(file_2d_path)
+            pixelization = Pixelization(file_2d_path, self.layout_curve)
             print("Look we got here somehow")
             pixelization.generate_image(self.save_dir)
 

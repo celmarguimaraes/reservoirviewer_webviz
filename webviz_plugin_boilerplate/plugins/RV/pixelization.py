@@ -2,10 +2,11 @@ import pandas as pd
 import numpy as np
 from pandas import DataFrame
 import matplotlib.pyplot as plt
+from .snake_curve import SnakeCurve
+from .curve import Curve
+from .dimension import Dimension
+from .coordinate import Coordinate
 import math
-from curve import Curve
-from snake_curve import SnakeCurve
-from dimension import Dimension
 
 
 class Pixelization:
@@ -61,7 +62,7 @@ class Pixelization:
         Draws the pixelization based on the model matrix.
 
         It reorganizes data into an array following the rules of the Pixelization Visualization technique.
-        First, we need to be sure we are dealing with swuared models. If it is not squared, we need to be sure we have the
+        First, we need to be sure we are dealing with squared models. If it is not squared, we need to be sure we have the
         same amount of NaN values at the beginning and at the end of the array. After calculating those values we iterate
         through the array, stacking the elements based on the depth (models).
 
@@ -132,3 +133,6 @@ class Pixelization:
             plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")
+
+if __name__ == "__main__":
+    print("hey")

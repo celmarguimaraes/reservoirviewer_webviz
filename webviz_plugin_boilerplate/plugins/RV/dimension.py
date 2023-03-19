@@ -1,4 +1,4 @@
-from pair import Pair
+from .pair import Pair
 
 
 class Dimension(Pair):
