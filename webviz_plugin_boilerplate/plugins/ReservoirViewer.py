@@ -40,6 +40,10 @@ class ReservoirViewer(WebvizPluginABC):
         self.div_id = "output-state}"
         self.input_directory_save = "directory-save"
         self.color_map = "dropdown-colormap"
+        self.custom_i_axis_slice_min = "custom-i-axis-slice-min"
+        self.custom_i_axis_slice_max = "custom-i-axis-slice-max"
+        self.custom_j_axis_slice_min = "custom-j-axis-slice-min"
+        self.custom_j_axis_slice_max = "custom-j-axis-slice-max"
 
         self.input_list = {
             self.input_root: "root path",
@@ -64,6 +68,10 @@ class ReservoirViewer(WebvizPluginABC):
             self.input_all_models: "name of txt file with all models",
             self.input_highlighted_models: "name of highlighted models file",
             self.input_directory_save: "directory to save generated image",
+            self.custom_i_axis_slice_min: "custom i axis slice minimum",
+            self.custom_i_axis_slice_max: "custom i axis slice maximum",
+            self.custom_j_axis_slice_min: "custom j axis slice minimum",
+            self.custom_j_axis_slice_max: "custom j axis slice maximum"
         }
 
         self.set_callbacks()
@@ -147,6 +155,10 @@ class ReservoirViewer(WebvizPluginABC):
                 Input(self.button_id, "n_clicks"),
                 Input(self.input_directory_save, "value"),
                 Input(self.color_map, "value"),
+                Input(self.custom_i_axis_slice_min, "value"),
+                Input(self.custom_i_axis_slice_max, "value"),
+                Input(self.custom_j_axis_slice_min, "value"),
+                Input(self.custom_j_axis_slice_max, "value"),
             ],
         )
         def update_text(
@@ -173,7 +185,11 @@ class ReservoirViewer(WebvizPluginABC):
                 highlighted_models: str,
                 button: int,
                 directory_save: str,
-                color_map: str
+                color_map: str,
+                custom_i_axis_slice_min: str,
+                custom_i_axis_slice_max: str,
+                custom_j_axis_slice_min: str,
+                custom_j_axis_slice_max: str
         ):
             if self.button_id == ctx.triggered_id:  # if the submit button is clicked
 
@@ -200,6 +216,10 @@ class ReservoirViewer(WebvizPluginABC):
                 self.highlighted_models = highlighted_models
                 self.directory_save = directory_save
                 self.color_map = color_map
+                self.custom_i_axis_slice_min = custom_i_axis_slice_min
+                self.custom_i_axis_slice_max = custom_i_axis_slice_max
+                self.custom_j_axis_slice_min = custom_j_axis_slice_min
+                self.custom_j_axis_slice_max = custom_j_axis_slice_max
 
                 args = [
                     self.root,
@@ -224,7 +244,11 @@ class ReservoirViewer(WebvizPluginABC):
                     self.all_models,
                     self.highlighted_models,
                     self.directory_save,
-                    self.color_map
+                    self.color_map,
+                    self.custom_i_axis_slice_min,
+                    self.custom_i_axis_slice_max,
+                    self.custom_j_axis_slice_min,
+                    self.custom_j_axis_slice_max,
                 ]
 
                 rvConfig = rvconfig(args)

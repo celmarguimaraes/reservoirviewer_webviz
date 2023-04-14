@@ -23,6 +23,10 @@ class rvconfig:
         self.strategies = []
         self.save_dir = configs[21]
         self.color_map = configs[22]
+        self.custom_i_axis_slice_min = configs[23]
+        self.custom_i_axis_slice_max = configs[24]
+        self.custom_j_axis_slice_min = configs[23]
+        self.custom_j_axis_slice_max = configs[24]
 
         self.properties.append(
             Property(
