@@ -71,8 +71,8 @@ class Pixelization:
             Numpy array with the elements reorganized.
         """
         shape: int = math.ceil(math.sqrt(self.num_of_models))
-        prev = math.ceil(((shape ** 2) - self.num_of_models) / 2)
-        next = math.floor(((shape ** 2) - self.num_of_models) / 2)
+        prev_value = math.ceil(((shape ** 2) - self.num_of_models) / 2)
+        next_value = math.floor(((shape ** 2) - self.num_of_models) / 2)
         matrix = self.generate_model_matrix()
         dimension = Dimension(shape, shape)
         curve = self.set_curve(self.curve, shape * shape, dimension)
@@ -80,18 +80,18 @@ class Pixelization:
         result = []
         for i in range(self.max_i):
             for j in range(self.max_j):
-                list = []
+                list_of_values = []
                 for m in range(self.num_of_models):
                     valor = matrix[m][i][j]
-                    list.append(valor)
-                list = np.pad(
-                    list, ((prev, next)), "constant", constant_values=(np.nan)
+                    list_of_values.append(valor)
+                list_of_values = np.pad(
+                    list_of_values, (prev_value, next_value), "constant", constant_values=np.nan
                 )
-                list = np.array(list).reshape(shape, shape)
+                list_of_values = np.array(list_of_values).reshape(shape, shape)
                 # list = np.array(list).reshape(shape, shape)[::-1]
                 # Flip every row with odd index - Snake Curve
-                list = curve.parse_matrix(list)
-                result.append(list)
+                list_of_values = curve.parse_matrix(list_of_values)
+                result.append(list_of_values)
 
         return np.array(result)
 
@@ -106,16 +106,16 @@ class Pixelization:
         padded_array = list()
         for element in matrix:
             padded_array.append(
-                np.pad(element, ((1, 1)), "constant", constant_values=(np.nan))
+                np.pad(element, (1, 1), "constant", constant_values=np.nan)
             )
 
         return np.array(padded_array)
 
     def get_min_and_max(self):
-        list = self.read_to_list()
-        return (np.nanmin(list), np.nanmax(list))
+        list_of_values = self.read_to_list()
+        return np.nanmin(list_of_values), np.nanmax(list_of_values)
 
-    def generate_image(self, path: str) -> None:
+    def generate_image(self, path: str, color_map:str) -> None:
         """
         It generates and save the image based on the matrix (multidimensional array) received.
 
@@ -130,7 +130,7 @@ class Pixelization:
 
         try:
             plt.figure(figsize=(self.max_j, self.max_i), layout="constrained")
-            plt.imshow(np.flip(array, 1), cmap="jet", vmin=values[0], vmax=values[1])
+            plt.imshow(np.flip(array, 1), cmap=color_map, vmin=values[0], vmax=values[1])
             plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")

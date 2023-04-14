@@ -1,20 +1,20 @@
 import os
 from pathlib import Path
-from dash import Dash, dcc, html, Input, Output, ctx
-from webviz_config import WebvizPluginABC
-from .RV.RVConfig import Configuration
-from webviz_config.webviz_assets import WEBVIZ_ASSETS
-from dash import callback
-import webviz_core_components as wcc
 
+import webviz_core_components as wcc
+from dash import callback
+from dash import dcc, html, Input, Output, ctx
+from webviz_config import WebvizPluginABC
+from webviz_config.webviz_assets import WEBVIZ_ASSETS
+
+from .RV.rvconfig import rvconfig
 
 class ReservoirViewer(WebvizPluginABC):
-
     def __init__(self, app) -> None:
 
         super().__init__()
 
-        # IDs of the inputs
+        ## IDs of the inputs
         self.input_root = "input-root"
         self.input_benchmark = "input-benchmark"
         self.input_folder2d = "input-folder2d"
@@ -38,9 +38,9 @@ class ReservoirViewer(WebvizPluginABC):
         self.input_highlighted_models = "input-highlighted_models"
         self.button_id = "submit-button"
         self.div_id = "output-state}"
-        self.input_generated_img_folder = "input-generated-folder"
+        self.input_directory_save = "directory-save"
+        self.color_map = "dropdown-colormap"
 
-        # Placeholders of each input
         self.input_list = {
             self.input_root: "root path",
             self.input_benchmark: "benchmark",
@@ -63,108 +63,119 @@ class ReservoirViewer(WebvizPluginABC):
             self.input_strategy_folder: "strategy: path to folder",
             self.input_all_models: "name of txt file with all models",
             self.input_highlighted_models: "name of highlighted models file",
-            self.input_generated_img_folder: "generated images folder"}
+            self.input_directory_save: "directory to save generated image",
+        }
 
         self.set_callbacks()
 
     @property
     def layout(self):
-        style = {
-            "height": f"2.5em",
-            "align-items": "center",
-            "margin": "0.8em"
-        }
+        style = {"height": f"2.5em", "align-items": "center", "margin": "0.8em"}
 
-        div_style = {
-            "width": "60vw",
-            "align-items": "center",
-            "margin": "1em"
-        }
-        
-        div_button_style = {
-            "display":"flex",
-            "gap":"20px",
-            "align-items":"center"
-        }
-
-        return html.Div([
-            wcc.FlexBox([
-                html.Div([
-                    dcc.Input(
-                         id=i,
-                         type="text",
-                         placeholder="Insert {} here".format(
-                             self.input_list[i]),
-                         debounce=False,
-                         autoComplete="on",
-                         required=False,
-                         size="60",
-                         style=style,
-                         ),
-                ]) for i in self.input_list  # Iterate through the list of IDs to create all the text boxes
-            ]),
-
-            html.Br(),
-            html.Div([
-                html.Button(id=self.button_id, n_clicks=0, children="Submit"),
-                html.Div(id=self.div_id, children="Image will appear below"), ], style=div_button_style),
-            html.Div(id=self.div_id),
-
-        ])
+        return html.Div(
+            [
+                wcc.FlexBox(
+                    [
+                        html.Div(
+                            [
+                                dcc.Input(
+                                    id=i,
+                                    type="text",
+                                    placeholder="Insert {} here".format(
+                                        self.input_list[i]
+                                    ),
+                                    debounce=False,
+                                    autoComplete="on",
+                                    required=False,
+                                    size="60",
+                                    style=style,
+                                ),
+                            ]
+                        )
+                        for i in self.input_list  # Iterate through the list of IDs to create all the text boxes
+                    ]
+                ),
+                html.Br(),
+                html.Div(
+                    [
+                        dcc.Dropdown(
+                            options=[
+                                {'label': 'jet', 'value': 'jet'},
+                                {'label': 'rainbow', 'value': 'rainbow'},
+                                {'label': 'turbo', 'value': 'turbo'},
+                                {'label': 'gist_rainbow', 'value': 'gist_rainbow'},
+                            ],
+                            id=self.color_map
+                        ),
+                    ]
+                ),
+                html.Div(
+                    [
+                        html.Button(id=self.button_id, n_clicks=0, children="Submit"),
+                        html.Div(id=self.div_id, children="Image will appear below"),
+                    ]
+                ),
+                html.Div(id=self.div_id),
+            ]
+        )
 
     def set_callbacks(self):
         @callback(
             Output(self.div_id, "children"),
             [
-                Input(self.input_root, "value"), Input(
-                    self.input_benchmark, "value"),
-                Input(self.input_folder2d, "value"), Input(
-                    self.input_folder_Dist_Matr, "value"),
-                Input(self.input_chart_type, "value"), Input(
-                    self.input_layout_curve, "value"),
-                Input(self.input_clustering_method, "value"), Input(
-                    self.input_distance_matrix, "value"),
-                Input(self.input_min_clusters, "value"), Input(
-                    self.input_max_clusters, "value"),
-                Input(self.input_iterations, "value"), Input(
-                    self.input_property_name, "value"),
-                Input(self.input_property_function, "value"), Input(
-                    self.input_property_file_2d, "value"),
-                Input(self.input_property_dist_matrix, "value"), Input(
-                    self.input_property_sorting_alg, "value"),
-                Input(self.input_property_file_feat_vect, "value"), Input(
-                    self.input_strategy_name, "value"),
-                Input(self.input_strategy_folder, "value"), Input(
-                    self.input_all_models, "value"),
-                Input(self.input_highlighted_models, "value"), Input(
-                    self.input_generated_img_folder, "value"),
-                Input((self.button_id), "n_clicks")
-            ]
+                Input(self.input_root, "value"),
+                Input(self.input_benchmark, "value"),
+                Input(self.input_folder2d, "value"),
+                Input(self.input_folder_Dist_Matr, "value"),
+                Input(self.input_chart_type, "value"),
+                Input(self.input_layout_curve, "value"),
+                Input(self.input_clustering_method, "value"),
+                Input(self.input_distance_matrix, "value"),
+                Input(self.input_min_clusters, "value"),
+                Input(self.input_max_clusters, "value"),
+                Input(self.input_iterations, "value"),
+                Input(self.input_property_name, "value"),
+                Input(self.input_property_function, "value"),
+                Input(self.input_property_file_2d, "value"),
+                Input(self.input_property_dist_matrix, "value"),
+                Input(self.input_property_sorting_alg, "value"),
+                Input(self.input_property_file_feat_vect, "value"),
+                Input(self.input_strategy_name, "value"),
+                Input(self.input_strategy_folder, "value"),
+                Input(self.input_all_models, "value"),
+                Input(self.input_highlighted_models, "value"),
+                Input(self.button_id, "n_clicks"),
+                Input(self.input_directory_save, "value"),
+                Input(self.color_map, "value"),
+            ],
         )
-        def update_text(root: Path,
-                        benchmark: str,
-                        folder2d: str,
-                        folder_Dist_Matr: str,
-                        chart_type: str,
-                        layout_curve: str,
-                        clustering_method: str,
-                        distance_matrix: str,
-                        min_clusters: int,
-                        max_clusters: int,
-                        iterations: int,
-                        property_name: str,
-                        property_function: str,
-                        property_file: str,
-                        property_file_dist_matrix: str,
-                        property_sorting_alg: str,
-                        property_file_feat_vect: str,
-                        strategy_name: str,
-                        strategy_folder: str,
-                        all_models: str,
-                        highlighted_models: str,
-                        generated_folder: str,
-                        button: int):
-            if (self.button_id == ctx.triggered_id):  # If the submit button is clicked
+        def update_text(
+                root: Path,
+                benchmark: str,
+                folder2d: str,
+                folder_Dist_Matr: str,
+                chart_type: str,
+                layout_curve: str,
+                clustering_method: str,
+                distance_matrix: str,
+                min_clusters: int,
+                max_clusters: int,
+                iterations: int,
+                property_name: str,
+                property_function: str,
+                property_file: str,
+                property_file_dist_matrix: str,
+                property_sorting_alg: str,
+                property_file_feat_vect: str,
+                strategy_name: str,
+                strategy_folder: str,
+                all_models: str,
+                highlighted_models: str,
+                button: int,
+                directory_save: str,
+                color_map: str
+        ):
+            if self.button_id == ctx.triggered_id:  # if the submit button is clicked
 
                 self.root = root
                 self.benchmark = benchmark
@@ -181,13 +192,14 @@ class ReservoirViewer(WebvizPluginABC):
                 self.property_function = property_function
                 self.property_file = property_file
                 self.property_file_dist_matrix = property_file_dist_matrix
-                self.property_sorting_alg = property_sorting_alg,
-                self.property_file_feat_vect = property_file_feat_vect,
+                self.property_sorting_alg = (property_sorting_alg,)
+                self.property_file_feat_vect = (property_file_feat_vect,)
                 self.strategy_name = strategy_name
                 self.strategy_folder = strategy_folder
                 self.all_models = all_models
                 self.highlighted_models = highlighted_models
-                self.input_generated_img_folder = generated_folder
+                self.directory_save = directory_save
+                self.color_map = color_map
 
                 args = [
                     self.root,
@@ -211,21 +223,29 @@ class ReservoirViewer(WebvizPluginABC):
                     self.strategy_folder,
                     self.all_models,
                     self.highlighted_models,
-                    self.input_generated_img_folder]
+                    self.directory_save,
+                    self.color_map
+                ]
 
-                # Execute the main app with the user input
-                rvConfig = Configuration(args)
+                rvConfig = rvconfig(args)
 
-                # Displays the the generated image
-                if (self.chart_type == "smallmultiples"):
-                    path = self.input_generated_img_folder + "//sm"+str(0)+".png"
+                full_path = os.path.realpath(__file__)
+
+                if self.chart_type == "smallmultiples":
+                    path = (
+                            os.path.dirname(full_path) + "//generated//sm" + str(0) + ".png"
+                    )
                     image = Path(path)
+                    self.image_url = WEBVIZ_ASSETS.add(image)
+
+                if self.chart_type == "pixelization":
+                    image = Path(rvConfig.save_dir)
                     self.image_url = WEBVIZ_ASSETS.add(image)
 
                 div_style = {
                     "width": "80vw",
                     "align-items": "center",
-                    "margin": "0.5em"
+                    "margin": "0.5em",
                 }
 
                 return html.Img(src=self.image_url, style=div_style)
