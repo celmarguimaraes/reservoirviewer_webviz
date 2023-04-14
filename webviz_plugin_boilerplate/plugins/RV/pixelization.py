@@ -1,12 +1,13 @@
-import pandas as pd
-import numpy as np
-from pandas import DataFrame
+import math
+
 import matplotlib.pyplot as plt
-from .snake_curve import SnakeCurve
+import numpy as np
+import pandas as pd
+from pandas import DataFrame
+
 from .curve import Curve
 from .dimension import Dimension
-from .coordinate import Coordinate
-import math
+from .snake_curve import SnakeCurve
 
 
 class Pixelization:
@@ -19,7 +20,7 @@ class Pixelization:
         self.curve: str = curve
 
     def set_curve(
-        self, curve_name: str, number_of_elements: int, dimension: Dimension
+            self, curve_name: str, number_of_elements: int, dimension: Dimension
     ) -> Curve:
         match curve_name:
             case "snake curve":
@@ -70,8 +71,8 @@ class Pixelization:
             Numpy array with the elements reorganized.
         """
         shape: int = math.ceil(math.sqrt(self.num_of_models))
-        prev = math.ceil(((shape**2) - self.num_of_models) / 2)
-        next = math.floor(((shape**2) - self.num_of_models) / 2)
+        prev = math.ceil(((shape ** 2) - self.num_of_models) / 2)
+        next = math.floor(((shape ** 2) - self.num_of_models) / 2)
         matrix = self.generate_model_matrix()
         dimension = Dimension(shape, shape)
         curve = self.set_curve(self.curve, shape * shape, dimension)
@@ -133,6 +134,3 @@ class Pixelization:
             plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")
-
-if __name__ == "__main__":
-    print("hey")

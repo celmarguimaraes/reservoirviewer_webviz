@@ -1,11 +1,13 @@
 import os
 from pathlib import Path
-from dash import Dash, dcc, html, Input, Output, ctx
-from webviz_config import WebvizPluginABC
-from .RV.RVConfig import Configuration
-from webviz_config.webviz_assets import WEBVIZ_ASSETS
-from dash import callback
+
 import webviz_core_components as wcc
+from dash import callback
+from dash import dcc, html, Input, Output, ctx
+from webviz_config import WebvizPluginABC
+from webviz_config.webviz_assets import WEBVIZ_ASSETS
+
+from .RV.rvconfig import Configuration
 
 
 class ReservoirViewer(WebvizPluginABC):
@@ -136,29 +138,29 @@ class ReservoirViewer(WebvizPluginABC):
             ],
         )
         def update_text(
-            root: Path,
-            benchmark: str,
-            folder2d: str,
-            folder_Dist_Matr: str,
-            chart_type: str,
-            layout_curve: str,
-            clustering_method: str,
-            distance_matrix: str,
-            min_clusters: int,
-            max_clusters: int,
-            iterations: int,
-            property_name: str,
-            property_function: str,
-            property_file: str,
-            property_file_dist_matrix: str,
-            property_sorting_alg: str,
-            property_file_feat_vect: str,
-            strategy_name: str,
-            strategy_folder: str,
-            all_models: str,
-            highlighted_models: str,
-            button: int,
-            directory_save: str,
+                root: Path,
+                benchmark: str,
+                folder2d: str,
+                folder_Dist_Matr: str,
+                chart_type: str,
+                layout_curve: str,
+                clustering_method: str,
+                distance_matrix: str,
+                min_clusters: int,
+                max_clusters: int,
+                iterations: int,
+                property_name: str,
+                property_function: str,
+                property_file: str,
+                property_file_dist_matrix: str,
+                property_sorting_alg: str,
+                property_file_feat_vect: str,
+                strategy_name: str,
+                strategy_folder: str,
+                all_models: str,
+                highlighted_models: str,
+                button: int,
+                directory_save: str,
         ):
             if self.button_id == ctx.triggered_id:  # if the submit button is clicked
 
@@ -216,7 +218,7 @@ class ReservoirViewer(WebvizPluginABC):
 
                 if self.chart_type == "smallmultiples":
                     path = (
-                        os.path.dirname(full_path) + "//generated//sm" + str(0) + ".png"
+                            os.path.dirname(full_path) + "//generated//sm" + str(0) + ".png"
                     )
                     image = Path(path)
                     self.image_url = WEBVIZ_ASSETS.add(image)

@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+
 from .coordinate import Coordinate
 from .dimension import Dimension
 

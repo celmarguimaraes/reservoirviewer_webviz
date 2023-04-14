@@ -1,10 +1,7 @@
-import re
-from .Strategy import Strategy
-from .Property import Property
-from .WellList import WellList
-from .SmallMultiples import SmallMultiples
 from .pixelization import Pixelization
-from .Clustering import Clustering
+from .property import Property
+from .small_multiples import SmallMultiples
+from .strategy import Strategy
 
 
 class Configuration:

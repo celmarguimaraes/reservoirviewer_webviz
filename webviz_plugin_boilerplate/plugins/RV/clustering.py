@@ -1,7 +1,5 @@
-from sklearn import metrics
-from sklearn.cluster import KMeans
-from scipy.spatial.distance import cdist
 import numpy as np
+from sklearn.cluster import KMeans
 
 
 class Clustering:

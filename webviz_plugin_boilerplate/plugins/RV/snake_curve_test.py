@@ -1,8 +1,8 @@
 import unittest
 
-from snake_curve import SnakeCurve
-from dimension import Dimension
 from coordinate import Coordinate
+from dimension import Dimension
+from snake_curve import SnakeCurve
 
 
 class TestSnakeCurve(unittest.TestCase):

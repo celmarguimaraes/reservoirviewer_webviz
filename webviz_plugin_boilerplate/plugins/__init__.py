@@ -1,1 +1,1 @@
-from .ReservoirViewer import ReservoirViewer
+from .reservoir_viewer import ReservoirViewer

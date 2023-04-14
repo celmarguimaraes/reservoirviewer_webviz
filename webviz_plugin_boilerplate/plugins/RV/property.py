@@ -1,6 +1,6 @@
 class Property:
     def __init__(
-        self, name, function, file2d, file_dist_matr, sorting_algor, file_feat_vector
+            self, name, function, file2d, file_dist_matr, sorting_algor, file_feat_vector
     ):
         self.name = name
         self.function = function
