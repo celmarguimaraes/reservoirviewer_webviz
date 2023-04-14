@@ -4,7 +4,7 @@ from .small_multiples import SmallMultiples
 from .strategy import Strategy
 
 
-class Configuration:
+class rvconfig:
     def __init__(self, configs):
         self.root = configs[0]
         self.benchmark = configs[1]

@@ -7,8 +7,7 @@ from dash import dcc, html, Input, Output, ctx
 from webviz_config import WebvizPluginABC
 from webviz_config.webviz_assets import WEBVIZ_ASSETS
 
-from .RV.rvconfig import Configuration
-
+from .RV.rvconfig import rvconfig
 
 class ReservoirViewer(WebvizPluginABC):
     def __init__(self, app) -> None:
@@ -212,7 +211,7 @@ class ReservoirViewer(WebvizPluginABC):
                     self.directory_save,
                 ]
 
-                rvConfig = Configuration(args)
+                rvConfig = rvconfig(args)
 
                 full_path = os.path.realpath(__file__)
 
