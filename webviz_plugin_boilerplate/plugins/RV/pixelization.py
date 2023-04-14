@@ -1,101 +1,136 @@
-from dimension import Dimension
-import pandas as pd
-import numpy as np
-from pandas import DataFrame
-import csv
-from matplotlib import pyplot as plt
 import math
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+from pandas import DataFrame
+
+from .curve import Curve
+from .dimension import Dimension
+from .snake_curve import SnakeCurve
+
+
 class Pixelization:
-    def __init__(self, path:str) -> None:
+    def __init__(self, path: str, curve: str) -> None:
         self.path = path
-        #NOTE: This is throwing a warning because the column is read as data
         self.file = DataFrame(pd.read_csv(path))
-        self.max_i:int = int(pd.to_numeric(self.file.columns[0]))
-        self.max_j:int = int(pd.to_numeric(self.file.columns[1]))
-        self.num_of_models:int = int(pd.to_numeric(self.file.columns[2]))
-    
+        self.max_i: int = int(pd.to_numeric(self.file.columns[0]))
+        self.max_j: int = int(pd.to_numeric(self.file.columns[1]))
+        self.num_of_models: int = int(pd.to_numeric(self.file.columns[2]))
+        self.curve: str = curve
+
+    def set_curve(
+            self, curve_name: str, number_of_elements: int, dimension: Dimension
+    ) -> Curve:
+        match curve_name:
+            case "snake curve":
+                return SnakeCurve(number_of_elements, dimension)
+            case _:
+                raise Exception("This curve does not exist")
+
     def read_to_list(self) -> list:
+        """
+        Read a column into a list data structure.
+
+        Iterates through the first column in the .csv file and converts it into a list.
+
+        Return:
+            It return a list with numpy floats of 16 bytes.
+
+        """
+
         try:
             column = DataFrame(self.file[self.file.columns[0]]).squeeze().tolist()
-            return [np.float64(item) for item in column]
+            # return [np.float16(item) for item in column][::-1]
+            return [np.float16(item) for item in column]
         except:
-            raise Exception('Something went wrong when trying to read the file.')
+            raise Exception("Something went wrong when trying to read the file.")
 
-    # Separate each model in a matrix for itself
     def generate_model_matrix(self):
-        #NOTE: Each matrix inside needs to be squared
-        return np.array(self.read_to_list(), dtype=np.float64).reshape(self.num_of_models, self.max_i, self.max_j)
+        """
+        NOTE: Each matrix inside needs to be squared
+        Separates the list into sublists of the same model.
 
-    #TEST: This method is not complete. Test purposes only.
+        Returns:
+            Numpy array of shape (num_of_models, max_i, max_j)
+        """
+        return np.array(self.read_to_list(), dtype=np.float64).reshape(
+            self.num_of_models, self.max_i, self.max_j
+        )
+
     def draw(self):
-        shape:int = math.ceil(math.sqrt(self.num_of_models))
+        """
+        Draws the pixelization based on the model matrix.
+
+        It reorganizes data into an array following the rules of the Pixelization Visualization technique.
+        First, we need to be sure we are dealing with squared models. If it is not squared, we need to be sure we have the
+        same amount of NaN values at the beginning and at the end of the array. After calculating those values we iterate
+        through the array, stacking the elements based on the depth (models).
+
+        Returns:
+            Numpy array with the elements reorganized.
+        """
+        shape: int = math.ceil(math.sqrt(self.num_of_models))
         prev = math.ceil(((shape ** 2) - self.num_of_models) / 2)
         next = math.floor(((shape ** 2) - self.num_of_models) / 2)
         matrix = self.generate_model_matrix()
+        dimension = Dimension(shape, shape)
+        curve = self.set_curve(self.curve, shape * shape, dimension)
+
         result = []
         for i in range(self.max_i):
             for j in range(self.max_j):
-                list = [] #NOTE: Com base nesse vetor eu vou usar a curva.
+                list = []
                 for m in range(self.num_of_models):
                     valor = matrix[m][i][j]
                     list.append(valor)
-                #FIX: this does not work if num_of_models is not squared
-                list = np.pad(list, ((prev, next)), 'constant', constant_values=(np.nan))
+                list = np.pad(
+                    list, ((prev, next)), "constant", constant_values=(np.nan)
+                )
                 list = np.array(list).reshape(shape, shape)
+                # list = np.array(list).reshape(shape, shape)[::-1]
+                # Flip every row with odd index - Snake Curve
+                list = curve.parse_matrix(list)
                 result.append(list)
 
         return np.array(result)
 
     def pad_matrix(self):
+        """
+        It adds NaN value around each submatrix to give a space between each one, making it easier to visualize and distinct the submatrices.
+
+        Returns:
+            Numpy array with NaN elements on the edges.
+        """
         matrix = self.draw()
-        padded_array = []
+        padded_array = list()
         for element in matrix:
-            padded_array.append(np.pad(element, ((1, 1)), 'constant', constant_values=(np.nan)))
+            padded_array.append(
+                np.pad(element, ((1, 1)), "constant", constant_values=(np.nan))
+            )
 
         return np.array(padded_array)
 
+    def get_min_and_max(self):
+        list = self.read_to_list()
+        return (np.nanmin(list), np.nanmax(list))
 
-    def generate_csv_file(self) -> None:
-        initial = self.pad_matrix()
-        # initial = np.split(initial, self.num_of_models)
-        # array = np.array(np.dstack(np.array_split(initial, self.num_of_models)))
-            # print(len(initial))
-            # array = np.split(initial, self.num_of_models)
-            # for elements in array:
-                # print(len(elements))
+    def generate_image(self, path: str) -> None:
+        """
+        It generates and save the image based on the matrix (multidimensional array) received.
 
-            # exit(0)
-        print(len(initial))
-        test = np.dstack(np.array_split(initial, self.max_i))
-        with open("27.csv", 'w') as file:
-            for item in test:
-                write = csv.writer(file)
-                write.writerows(item)
+        Returns:
+            None.
+        """
+        # array = self.pad_matrix()[::-1]
+        array = np.flip(self.pad_matrix(), 0)
+        array = np.array(np.dstack(np.array_split(array, self.max_i)))
+        array = array.reshape(array.shape[0] * array.shape[1], array.shape[2])
+        values = self.get_min_and_max()
 
         try:
-            df = pd.read_csv("27.csv")
-            plt.imshow(df, cmap='rainbow')
-            plt.savefig('test.png')
+            plt.figure(figsize=(self.max_j, self.max_i), layout="constrained")
+            plt.imshow(np.flip(array, 1), cmap="jet", vmin=values[0], vmax=values[1])
+            plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")
-
-
-if __name__=="__main__":
-    # pixelization = Pixelization("tests_files/arithmetic-mean.csv")
-    pixelization = Pixelization("intermediary_file.csv")
-    # print(pixelization.draw())
-    # print(len(pixelization.draw()[3173]))
-    # print(pixelization.pad_matrix())
-    pixelization.generate_csv_file()
-    # pixelization.pad_array()
-    # print(pixelization.draw())
-    # print(pixelization.generate_model_matrix())
-    # print(pixelization.draw().reshape((9, -3, 9), order='C'))
-    # print(pixelization.read_to_list())
-    # draw = pixelization.draw()
-    # draw = np.array_split(draw, 9)
-    # draw = np.dstack(draw)
-    # print(np.array(draw))
-    # print(np.dstack(np.split(pixelization.draw(), 9)))
-

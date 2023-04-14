@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
-from coordinate import Coordinate
-from dimension import Dimension
+
+from .coordinate import Coordinate
+from .dimension import Dimension
+
 
 class Curve(ABC):
-    def __init__(self, number_of_elements:int, dimension:Dimension):
+    def __init__(self, number_of_elements: int, dimension: Dimension):
         self.number_of_elements = number_of_elements
         self.dimension = dimension
 
@@ -14,14 +16,17 @@ class Curve(ABC):
         return self.dimension
 
     @abstractmethod
-    def get_coordinate(self, d:int) -> Coordinate:
-        pass
-    
-    @abstractmethod
-    def get_d(self, coordinate:Coordinate) -> int:
+    def get_coordinate(self, d: int) -> Coordinate:
         pass
 
     @abstractmethod
-    def define_dimension(self, number_of_elements:int) -> Dimension:
+    def get_d(self, coordinate: Coordinate) -> int:
         pass
 
+    @abstractmethod
+    def define_dimension(self, number_of_elements: int) -> Dimension:
+        pass
+
+    @abstractmethod
+    def parse_matrix(self, matrix):
+        pass

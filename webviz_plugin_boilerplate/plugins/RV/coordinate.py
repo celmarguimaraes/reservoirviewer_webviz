@@ -1,7 +1,8 @@
-from pair import Pair
+from .pair import Pair
+
 
 class Coordinate(Pair):
-    def __init__(self, x:int, y:int) -> None:
+    def __init__(self, x: int, y: int) -> None:
         super().__init__(x, y)
 
     def get_x(self) -> int:
@@ -9,5 +10,3 @@ class Coordinate(Pair):
 
     def get_y(self) -> int:
         return self.y
-    
-
