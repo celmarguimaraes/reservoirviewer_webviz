@@ -22,6 +22,7 @@ class rvconfig:
         self.properties = []
         self.strategies = []
         self.save_dir = configs[21]
+        self.color_map = configs[22]
 
         self.properties.append(
             Property(
@@ -73,7 +74,7 @@ def settingDrawConfigs(self):
             print("Executing Pixelization")
             pixelization = Pixelization(file_2d_path, self.layout_curve)
             print("Look we got here somehow")
-            pixelization.generate_image(self.save_dir)
+            pixelization.generate_image(self.save_dir, self.color_map)
 
         elif self.chart_type == "smallmultiples":
             print("Executing Small Multiples")

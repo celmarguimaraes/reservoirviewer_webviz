@@ -39,6 +39,7 @@ class ReservoirViewer(WebvizPluginABC):
         self.button_id = "submit-button"
         self.div_id = "output-state}"
         self.input_directory_save = "directory-save"
+        self.color_map = "dropdown-colormap"
 
         self.input_list = {
             self.input_root: "root path",
@@ -71,8 +72,6 @@ class ReservoirViewer(WebvizPluginABC):
     def layout(self):
         style = {"height": f"2.5em", "align-items": "center", "margin": "0.8em"}
 
-        div_style = {"width": "60vw", "align-items": "center", "margin": "1em"}
-
         return html.Div(
             [
                 wcc.FlexBox(
@@ -97,6 +96,19 @@ class ReservoirViewer(WebvizPluginABC):
                     ]
                 ),
                 html.Br(),
+                html.Div(
+                    [
+                        dcc.Dropdown(
+                            options=[
+                                {'label': 'jet', 'value': 'jet'},
+                                {'label': 'rainbow', 'value': 'rainbow'},
+                                {'label': 'turbo', 'value': 'turbo'},
+                                {'label': 'gist_rainbow', 'value': 'gist_rainbow'},
+                            ],
+                            id=self.color_map
+                        ),
+                    ]
+                ),
                 html.Div(
                     [
                         html.Button(id=self.button_id, n_clicks=0, children="Submit"),
@@ -132,8 +144,9 @@ class ReservoirViewer(WebvizPluginABC):
                 Input(self.input_strategy_folder, "value"),
                 Input(self.input_all_models, "value"),
                 Input(self.input_highlighted_models, "value"),
-                Input((self.button_id), "n_clicks"),
+                Input(self.button_id, "n_clicks"),
                 Input(self.input_directory_save, "value"),
+                Input(self.color_map, "value"),
             ],
         )
         def update_text(
@@ -160,6 +173,7 @@ class ReservoirViewer(WebvizPluginABC):
                 highlighted_models: str,
                 button: int,
                 directory_save: str,
+                color_map: str
         ):
             if self.button_id == ctx.triggered_id:  # if the submit button is clicked
 
@@ -185,6 +199,7 @@ class ReservoirViewer(WebvizPluginABC):
                 self.all_models = all_models
                 self.highlighted_models = highlighted_models
                 self.directory_save = directory_save
+                self.color_map = color_map
 
                 args = [
                     self.root,
@@ -209,6 +224,7 @@ class ReservoirViewer(WebvizPluginABC):
                     self.all_models,
                     self.highlighted_models,
                     self.directory_save,
+                    self.color_map
                 ]
 
                 rvConfig = rvconfig(args)

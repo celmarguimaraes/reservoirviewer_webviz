@@ -174,3 +174,4 @@ test.png
 
 # vscode
 .vscode
+/webviz_plugin_boilerplate/plugins/RV/generated/

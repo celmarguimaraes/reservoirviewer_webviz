@@ -115,7 +115,7 @@ class Pixelization:
         list_of_values = self.read_to_list()
         return np.nanmin(list_of_values), np.nanmax(list_of_values)
 
-    def generate_image(self, path: str) -> None:
+    def generate_image(self, path: str, color_map:str) -> None:
         """
         It generates and save the image based on the matrix (multidimensional array) received.
 
@@ -130,7 +130,7 @@ class Pixelization:
 
         try:
             plt.figure(figsize=(self.max_j, self.max_i), layout="constrained")
-            plt.imshow(np.flip(array, 1), cmap="jet", vmin=values[0], vmax=values[1])
+            plt.imshow(np.flip(array, 1), cmap=color_map, vmin=values[0], vmax=values[1])
             plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")
