@@ -1,13 +1,13 @@
 import os
 from pathlib import Path
 
-import webviz_core_components as wcc
 from dash import callback
 from dash import dcc, html, Input, Output, ctx
 from webviz_config import WebvizPluginABC
 from webviz_config.webviz_assets import WEBVIZ_ASSETS
 
 from .RV.rvconfig import rvconfig
+
 
 class ReservoirViewer(WebvizPluginABC):
     def __init__(self, app) -> None:
@@ -37,34 +37,9 @@ class ReservoirViewer(WebvizPluginABC):
         self.input_all_models = "input-all_models"
         self.input_highlighted_models = "input-highlighted_models"
         self.button_id = "submit-button"
-        self.div_id = "output-state}"
+        self.div_id = "output-state"
         self.input_directory_save = "directory-save"
         self.color_map = "dropdown-colormap"
-
-        self.input_list = {
-            self.input_root: "root path",
-            self.input_benchmark: "benchmark",
-            self.input_folder2d: "name of 2d file folder",
-            self.input_folder_Dist_Matr: "distance matrix folder name",
-            self.input_chart_type: "chart type (pixelization/smallmultiples)",
-            self.input_layout_curve: "layout curve (none)",
-            self.input_clustering_method: "clustering method (only xmeans)",
-            self.input_distance_matrix: "distance matrix (MODELS3D_ALL_PROP/MODELS3D_ PROP/FEATVECTORS_PROP)",
-            self.input_min_clusters: "minimum number of clusters",
-            self.input_max_clusters: "maximum number of clusters",
-            self.input_iterations: "number of iterations",
-            self.input_property_name: "property: name",
-            self.input_property_function: "property: coordinate suppression function (ex: MIN, MAX, SUM)",
-            self.input_property_file_2d: "property: name of file-2d (ex: intermediary_file.csv)",
-            self.input_property_dist_matrix: "property: name of distance matrix file",
-            self.input_property_sorting_alg: "property: name of sorting algorithm",
-            self.input_property_file_feat_vect: "property: name of feature vectors file",
-            self.input_strategy_name: "strategy: name",
-            self.input_strategy_folder: "strategy: path to folder",
-            self.input_all_models: "name of txt file with all models",
-            self.input_highlighted_models: "name of highlighted models file",
-            self.input_directory_save: "directory to save generated image",
-        }
 
         self.set_callbacks()
 
@@ -72,46 +47,81 @@ class ReservoirViewer(WebvizPluginABC):
     def layout(self):
         style = {"height": f"2.5em", "align-items": "center", "margin": "0.8em"}
 
+        def get_text_input(div_id: str, placeholder_text: str):
+            return dcc.Input(
+                id=div_id,
+                type="text",
+                placeholder=placeholder_text,
+                debounce=False,
+                autoComplete="on",
+                required=False,
+                size="100",
+                style=style,
+            )
+
         return html.Div(
             [
-                wcc.FlexBox(
-                    [
-                        html.Div(
-                            [
-                                dcc.Input(
-                                    id=i,
-                                    type="text",
-                                    placeholder="Insert {} here".format(
-                                        self.input_list[i]
-                                    ),
-                                    debounce=False,
-                                    autoComplete="on",
-                                    required=False,
-                                    size="60",
-                                    style=style,
-                                ),
-                            ]
-                        )
-                        for i in self.input_list  # Iterate through the list of IDs to create all the text boxes
-                    ]
-                ),
+                html.Div(get_text_input("input-root", "root path")),
+                html.Div(get_text_input("input-benchmark", "benchmark")),
+                html.Div(get_text_input("input-folder2d", "name of 2d file folder")),
+                html.Div(get_text_input("input-folder_Dist_Matr", "distance matrix folder name")),
+                html.Div(get_text_input("input-clustering_method", "clustering method")),
+                html.Div(get_text_input("input-distance_matrix", "distance matrix")),
+                html.Div(get_text_input("input-min_clusters", "minimum number of clusters")),
+                html.Div(get_text_input("input-max_clusters", "maximum number of clusters")),
+                html.Div(get_text_input("input-iterations", "number of iterations")),
+                html.Div(get_text_input("input-property-name", "property name")),
+                html.Div(get_text_input("input-property-file", "coordinate suppression function")),
+                html.Div(get_text_input("input-property-file-2d", "name of file-2d")),
+                html.Div(get_text_input("input-property-dist-matrix", "name of distance matrix file")),
+                html.Div(get_text_input("input-property-sorting-alg", "sorting algorithm")),
+                html.Div(get_text_input("property-file-feat-vect", "name of feature vector file")),
+                html.Div(get_text_input("input-strategy-name", "strategy name")),
+                html.Div(get_text_input("input-strategy-folder", "strategy path to folder")),
+                html.Div(get_text_input("input-all_models", "name of txt file with all models")),
+                html.Div(get_text_input("input-highlighted_models", "name of highlighted models files")),
+                html.Div(get_text_input("directory-save", "directory to save generated image")),
                 html.Br(),
                 html.Div(
                     [
                         dcc.Dropdown(
+                            placeholder="Select the curve",
+                            options=[
+                                {'label': 'snake curve', 'value': 'snake curve'},
+                            ],
+                            id="input-layout_curve"
+                        ),
+                    ]
+                ),
+                html.Div(
+                    [
+                        dcc.Dropdown(
+                            placeholder="Select the visualization technique",
+                            options=[
+                                {'label': 'Pixelization', 'value': 'pixelization'},
+                                {'label': 'Smallmultiples', 'value': 'smallmultiples'},
+                            ],
+                            id="input-chart_type"
+                        ),
+                    ]
+                ),
+                html.Div(
+                    [
+                        dcc.Dropdown(
+                            placeholder="Select the colormap",
                             options=[
                                 {'label': 'jet', 'value': 'jet'},
                                 {'label': 'rainbow', 'value': 'rainbow'},
                                 {'label': 'turbo', 'value': 'turbo'},
                                 {'label': 'gist_rainbow', 'value': 'gist_rainbow'},
                             ],
-                            id=self.color_map
+                            id="dropdown-colormap"
                         ),
                     ]
                 ),
                 html.Div(
                     [
-                        html.Button(id=self.button_id, n_clicks=0, children="Submit"),
+                        html.Button(id="submit-button", n_clicks=0, children="Submit"),
                         html.Div(id=self.div_id, children="Image will appear below"),
                     ]
                 ),
