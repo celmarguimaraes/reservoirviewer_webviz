@@ -136,15 +136,15 @@ class SmallMultiples:
                 sp.set_visible(False)
                 if index < self.num_of_models - 1:
                     if (
-                            self.final_dict[self.new_grid_order[index]]
-                            != self.final_dict[self.new_grid_order[index + 1]]
+                        self.final_dict[self.new_grid_order[index]]
+                        != self.final_dict[self.new_grid_order[index + 1]]
                     ):
                         ax.spines["right"].set_visible(True)
                         ax.spines["right"].set_linestyle("dashed")
                 if index < self.num_of_models - dimension:
                     if (
-                            self.final_dict[self.new_grid_order[index]]
-                            != self.final_dict[self.new_grid_order[index + dimension]]
+                        self.final_dict[self.new_grid_order[index]]
+                        != self.final_dict[self.new_grid_order[index + dimension]]
                     ):
                         ax.spines["bottom"].set_visible(True)
                         ax.spines["bottom"].set_linestyle("dashed")

@@ -20,10 +20,10 @@ def loadFile(path):
     for line in file:
         values = line.split("")
         if (
-                line.startswith("PRD")
-                | line.startswith("INJ")
-                | line.startswith("PRODUCER")
-                | line.startswith("INJECTOR")
+            line.startswith("PRD")
+            | line.startswith("INJ")
+            | line.startswith("PRODUCER")
+            | line.startswith("INJECTOR")
         ):
             wellName = values[1]
             wellType = values[0]

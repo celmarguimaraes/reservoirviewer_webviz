@@ -20,7 +20,7 @@ class Pixelization:
         self.curve: str = curve
 
     def set_curve(
-            self, curve_name: str, number_of_elements: int, dimension: Dimension
+        self, curve_name: str, number_of_elements: int, dimension: Dimension
     ) -> Curve:
         match curve_name:
             case "snake curve":
@@ -71,8 +71,8 @@ class Pixelization:
             Numpy array with the elements reorganized.
         """
         shape: int = math.ceil(math.sqrt(self.num_of_models))
-        prev_value = math.ceil(((shape ** 2) - self.num_of_models) / 2)
-        next_value = math.floor(((shape ** 2) - self.num_of_models) / 2)
+        prev_value = math.ceil(((shape**2) - self.num_of_models) / 2)
+        next_value = math.floor(((shape**2) - self.num_of_models) / 2)
         matrix = self.generate_model_matrix()
         dimension = Dimension(shape, shape)
         curve = self.set_curve(self.curve, shape * shape, dimension)
@@ -85,7 +85,10 @@ class Pixelization:
                     valor = matrix[m][i][j]
                     list_of_values.append(valor)
                 list_of_values = np.pad(
-                    list_of_values, (prev_value, next_value), "constant", constant_values=np.nan
+                    list_of_values,
+                    (prev_value, next_value),
+                    "constant",
+                    constant_values=np.nan,
                 )
                 list_of_values = np.array(list_of_values).reshape(shape, shape)
                 # list = np.array(list).reshape(shape, shape)[::-1]
@@ -115,7 +118,7 @@ class Pixelization:
         list_of_values = self.read_to_list()
         return np.nanmin(list_of_values), np.nanmax(list_of_values)
 
-    def generate_image(self, path: str, color_map:str) -> None:
+    def generate_image(self, path: str, color_map: str) -> None:
         """
         It generates and save the image based on the matrix (multidimensional array) received.
 
@@ -130,7 +133,9 @@ class Pixelization:
 
         try:
             plt.figure(figsize=(self.max_j, self.max_i), layout="constrained")
-            plt.imshow(np.flip(array, 1), cmap=color_map, vmin=values[0], vmax=values[1])
+            plt.imshow(
+                np.flip(array, 1), cmap=color_map, vmin=values[0], vmax=values[1]
+            )
             plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")
