@@ -160,7 +160,7 @@ class SmallMultiples:
                     ax.spines["right"].set_visible(True)
 
         full_path = os.path.realpath(__file__)
-        path = os.path.dirname(full_path) + "//generated//sm" + str(prop_index) + ".png"
-        print("Path of the generated file: ", path)
+        path = os.path.dirname(full_path) + "//generated_images//sm" + str(prop_index) + ".png"
+        print("Path of the generated_images file: ", path)
 
         plt.savefig(path)

@@ -34,7 +34,7 @@ This will (first time) install all dependencies, but the `-e` flag will also mak
 After installation you can test the custom plugins from your package using the provided example configuration file:
 
 ```bash
-webviz build ./examples/boilerplate_example.yaml
+webviz build ./webviz_config_files/reservoir_viewer_example.yaml
 ```
 
 <br/>

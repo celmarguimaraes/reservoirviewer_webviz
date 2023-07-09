@@ -6,7 +6,7 @@ from dash import dcc, html, Input, Output, ctx
 from webviz_config import WebvizPluginABC
 from webviz_config.webviz_assets import WEBVIZ_ASSETS
 
-from reservoir_viewer.RV.rvconfig import rvconfig
+from reservoir_viewer.src.rvconfig import rvconfig
 
 class ReservoirViewer(WebvizPluginABC):
     def __init__(self, app) -> None:
@@ -97,7 +97,7 @@ class ReservoirViewer(WebvizPluginABC):
                         html.Div(
                             get_text_input(
                                 "directory-save",
-                                "directory to save generated image",
+                                "directory to save generated_images image",
                                 "Directory to Save Folder",
                             )
                         ),
@@ -369,7 +369,7 @@ class ReservoirViewer(WebvizPluginABC):
 
                 if self.chart_type == "smallmultiples":
                     path = (
-                        os.path.dirname(full_path) + "//generated//sm" + str(0) + ".png"
+                        os.path.dirname(full_path) + "//generated_images//sm" + str(0) + ".png"
                     )
                     image = Path(path)
                     self.image_url = WEBVIZ_ASSETS.add(image)
