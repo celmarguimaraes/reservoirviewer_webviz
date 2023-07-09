@@ -161,3 +161,4 @@ cython_debug/
 /generated_images/
 /tests_files/
 /webviz_config_files/
+.idea

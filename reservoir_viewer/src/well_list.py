@@ -1,4 +1,4 @@
-from .IJMKey import IJMKey
+from .ijm_key import IJMKey
 from .well import Well
 
 
