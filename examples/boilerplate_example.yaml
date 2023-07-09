@@ -19,11 +19,8 @@ layout:
           - This is a `webviz` instance created from a configuration file.
           - Open menu on the left to select page for demo plugins.
 
-  - section: Example Plugins
+  - section: Plugins
     content:
-      - group: Simple Plugins
-        icon: label
+      - page: Reservoir Viewer
         content:
-          - page: Some custom plugin
-            content:
-            - ReservoirViewer:
+          - ReservoirViewer:

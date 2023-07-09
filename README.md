@@ -50,9 +50,9 @@ pip install .[tests]
 You can do automatic linting of your code changes by running
 
 ```bash
-black --check webviz_plugin_boilerplate # Check code style
-pylint webviz_plugin_boilerplate # Check code quality
-bandit -r webviz_plugin_boilerplate  # Check Python security best practice
+black --check reservoir_viewer # Check code style
+pylint reservoir_viewer # Check code quality
+bandit -r reservoir_viewer  # Check Python security best practice
 ```
 
 ### Usage and documentation

@@ -6,8 +6,7 @@ from dash import dcc, html, Input, Output, ctx
 from webviz_config import WebvizPluginABC
 from webviz_config.webviz_assets import WEBVIZ_ASSETS
 
-from .RV.rvconfig import rvconfig
-
+from reservoir_viewer.RV.rvconfig import rvconfig
 
 class ReservoirViewer(WebvizPluginABC):
     def __init__(self, app) -> None:
@@ -44,34 +43,33 @@ class ReservoirViewer(WebvizPluginABC):
 
     @property
     def layout(self):
-        style = {"height": f"2em", "align-items": "center"}
+        style = {"float": "left", "margin": "0.5em"}
+        input_style = {"height": "2em", "width": "25em"}
 
         def get_text_input(div_id: str, placeholder_text: str, label: str):
             return html.Div(
-                style={"display": "flex"},
-                children=[
                     html.Div(
-                        style={"display": "flex", "align-items": "center"},
-                        children=[html.P(children=label)],
+                        style={"margin": "1.5em"},
+                        children=[
+                            html.P(label),
+                            dcc.Input(
+                                id=div_id,
+                                type="text",
+                                placeholder=placeholder_text,
+                                debounce=False,
+                                autoComplete="on",
+                                required=False,
+                                size="100",
+                                style=input_style,
+                            )
+                        ]
                     ),
-                    html.Div(
-                        dcc.Input(
-                            id=div_id,
-                            type="text",
-                            placeholder=placeholder_text,
-                            debounce=False,
-                            autoComplete="on",
-                            required=False,
-                            size="100",
-                            style=style,
-                        )
-                    ),
-                ],
             )
 
         return html.Div(
             [
                 html.Div(
+                    style=style,
                     children=[
                         html.H6("Folders Configuration"),
                         html.Div(get_text_input("input-root", "root path", "Path")),
@@ -106,6 +104,7 @@ class ReservoirViewer(WebvizPluginABC):
                     ]
                 ),
                 html.Div(
+                    style=style,
                     children=[
                         html.H6("Files Configuration"),
                         html.Div(
@@ -153,6 +152,7 @@ class ReservoirViewer(WebvizPluginABC):
                     ]
                 ),
                 html.Div(
+                    style=style,
                     children=[
                         html.H6("Clusters Configuration"),
                         html.Div(

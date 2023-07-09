@@ -6,14 +6,14 @@ with open("README.md", "r") as fh:
 TESTS_REQUIRE = ["selenium~=3.141", "pylint", "mock", "black", "bandit"]
 
 setup(
-    name="webviz_plugin_boilerplate",
-    description="Webviz plugin boilerplate with example plugins",
+    name="reservoir_viewer",
+    description="Reservoir Viewer Web for Webviz",
     long_description=LONG_DESCRIPTION,
     long_description_content_type="text/markdown",
     packages=find_packages(exclude=["tests"]),
     entry_points={
         "webviz_config_plugins": [
-            "ReservoirViewer = webviz_plugin_boilerplate.plugins:ReservoirViewer",
+            "ReservoirViewer = reservoir_viewer:ReservoirViewer",
         ]
     },
     install_requires=[
