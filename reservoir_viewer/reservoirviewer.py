@@ -6,13 +6,22 @@ from dash import dcc, html, Input, Output, ctx
 from webviz_config import WebvizPluginABC
 from webviz_config.webviz_assets import WEBVIZ_ASSETS
 
+from reservoir_viewer.src.components.components_style import (
+    get_section_div_style,
+    get_dropdown_style,
+)
+from reservoir_viewer.src.components.html_components import (
+    get_inputs,
+    get_section_title,
+)
 from reservoir_viewer.src.rvconfig import rvconfig
 
+
 class ReservoirViewer(WebvizPluginABC):
-    def __init__(self, app) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
-        ## IDs of the inputs
+        # IDs of the inputs
         self.input_root = "input-root"
         self.input_benchmark = "input-benchmark"
         self.input_folder2d = "input-folder2d"
@@ -43,209 +52,211 @@ class ReservoirViewer(WebvizPluginABC):
 
     @property
     def layout(self):
-        style = {"float": "left", "margin": "0.5em"}
-        input_style = {"height": "2em", "width": "25em"}
-
-        def get_text_input(div_id: str, placeholder_text: str, label: str):
-            return html.Div(
-                    html.Div(
-                        style={"margin": "1.5em"},
-                        children=[
-                            html.P(label),
-                            dcc.Input(
-                                id=div_id,
-                                type="text",
-                                placeholder=placeholder_text,
-                                debounce=False,
-                                autoComplete="on",
-                                required=False,
-                                size="100",
-                                style=input_style,
-                            )
-                        ]
-                    ),
-            )
-
         return html.Div(
             [
                 html.Div(
-                    style=style,
+                    style=get_section_div_style(),
                     children=[
-                        html.H6("Folders Configuration"),
-                        html.Div(get_text_input("input-root", "root path", "Path")),
+                        get_section_title("Folders Configuration"),
+                        html.Div(get_inputs("input-root", "root path", "Path")),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-folder2d",
                                 "name of 2d file folder",
                                 "Directory for 2D Files",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-folder_Dist_Matr",
                                 "distance matrix folder name",
                                 "Directory for Distance Matrix",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-strategy-folder",
                                 "strategy path to folder",
                                 "Directory for Strategy Files",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "directory-save",
                                 "directory to save generated_images image",
                                 "Directory to Save Folder",
                             )
                         ),
-                    ]
+                    ],
                 ),
                 html.Div(
-                    style=style,
+                    style=get_section_div_style(),
                     children=[
-                        html.H6("Files Configuration"),
+                        get_section_title("Files Configuration"),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-property-file",
                                 "coordinate suppression function",
                                 "Property File",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-property-file-2d",
                                 "name of file-2d",
                                 "Property 2D File",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-property-dist-matrix",
                                 "name of distance matrix file",
                                 "Distance Matrix File",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-all_models",
                                 "name of txt file with all models",
                                 "File All Models",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-highlighted_models",
                                 "name of highlighted models files",
                                 "File Highlighted Models",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "property-file-feat-vect",
                                 "name of feature vector file",
                                 "Feature Vector File",
                             )
                         ),
-                    ]
+                    ],
                 ),
                 html.Div(
-                    style=style,
+                    style=get_section_div_style(),
                     children=[
-                        html.H6("Clusters Configuration"),
+                        get_section_title("Clusters Configuration"),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-clustering_method",
                                 "clustering method",
                                 "Clustering Method",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-min_clusters",
                                 "minimum number of clusters",
                                 "Number of Minimum Cluster",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-max_clusters",
                                 "maximum number of clusters",
                                 "Number of Maximum Cluster",
                             )
                         ),
                         html.Div(
-                            get_text_input(
+                            get_inputs(
                                 "input-iterations",
                                 "number of iterations",
                                 "Number of Iterations",
                             )
                         ),
-                    ]
-                ),
-                html.Div(get_text_input("input-benchmark", "benchmark", "Benchmark")),
-                html.Div(
-                    get_text_input(
-                        "input-distance_matrix", "distance matrix", "Distance Matrix"
-                    )
+                    ],
                 ),
                 html.Div(
-                    get_text_input(
-                        "input-property-name", "property name", "Property Name"
-                    )
-                ),
-                html.Div(
-                    get_text_input(
-                        "input-property-sorting-alg",
-                        "sorting algorithm",
-                        "Sorting Algorithm",
-                    )
-                ),
-                html.Div(
-                    get_text_input(
-                        "input-strategy-name", "strategy name", "Strategy Name"
-                    )
+                    style=get_section_div_style(),
+                    children=[
+                        get_section_title("Prop. Configuration"),
+                        html.Div(
+                            get_inputs("input-benchmark", "benchmark", "Benchmark")
+                        ),
+                        html.Div(
+                            get_inputs(
+                                "input-distance_matrix",
+                                "distance matrix",
+                                "Distance Matrix",
+                            )
+                        ),
+                        html.Div(
+                            get_inputs(
+                                "input-property-name", "property name", "Property Name"
+                            )
+                        ),
+                        html.Div(
+                            get_inputs(
+                                "input-property-sorting-alg",
+                                "sorting algorithm",
+                                "Sorting Algorithm",
+                            )
+                        ),
+                        html.Div(
+                            get_inputs(
+                                "input-strategy-name", "strategy name", "Strategy Name"
+                            )
+                        ),
+                        html.Div(
+                            [
+                                dcc.Dropdown(
+                                    style=get_dropdown_style(),
+                                    placeholder="Select the Filling Curve",
+                                    options=[
+                                        {
+                                            "label": "snake curve",
+                                            "value": "snake curve",
+                                        },
+                                    ],
+                                    id="input-layout_curve",
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                dcc.Dropdown(
+                                    style=get_dropdown_style(),
+                                    placeholder="Select the Visualization Technique",
+                                    options=[
+                                        {
+                                            "label": "Pixelization",
+                                            "value": "pixelization",
+                                        },
+                                        {
+                                            "label": "Smallmultiples",
+                                            "value": "smallmultiples",
+                                        },
+                                    ],
+                                    id="input-chart_type",
+                                ),
+                            ]
+                        ),
+                        html.Div(
+                            [
+                                dcc.Dropdown(
+                                    style=get_dropdown_style(),
+                                    placeholder="Select the Colormap",
+                                    options=[
+                                        {"label": "jet", "value": "jet"},
+                                        {"label": "rainbow", "value": "rainbow"},
+                                        {"label": "turbo", "value": "turbo"},
+                                        {
+                                            "label": "gist_rainbow",
+                                            "value": "gist_rainbow",
+                                        },
+                                    ],
+                                    id="dropdown-colormap",
+                                ),
+                            ]
+                        ),
+                    ],
                 ),
                 html.Br(),
-                html.Div(
-                    [
-                        dcc.Dropdown(
-                            placeholder="Select the Filling Curve",
-                            options=[
-                                {"label": "snake curve", "value": "snake curve"},
-                            ],
-                            id="input-layout_curve",
-                        ),
-                    ]
-                ),
-                html.Div(
-                    [
-                        dcc.Dropdown(
-                            placeholder="Select the Visualization Technique",
-                            options=[
-                                {"label": "Pixelization", "value": "pixelization"},
-                                {"label": "Smallmultiples", "value": "smallmultiples"},
-                            ],
-                            id="input-chart_type",
-                        ),
-                    ]
-                ),
-                html.Div(
-                    [
-                        dcc.Dropdown(
-                            placeholder="Select the Colormap",
-                            options=[
-                                {"label": "jet", "value": "jet"},
-                                {"label": "rainbow", "value": "rainbow"},
-                                {"label": "turbo", "value": "turbo"},
-                                {"label": "gist_rainbow", "value": "gist_rainbow"},
-                            ],
-                            id="dropdown-colormap",
-                        ),
-                    ]
-                ),
                 html.Div(
                     [
                         html.Button(id="submit-button", n_clicks=0, children="Submit"),
@@ -290,7 +301,7 @@ class ReservoirViewer(WebvizPluginABC):
             root: Path,
             benchmark: str,
             folder2d: str,
-            folder_Dist_Matr: str,
+            folder_dist_matr: str,
             chart_type: str,
             layout_curve: str,
             clustering_method: str,
@@ -308,7 +319,6 @@ class ReservoirViewer(WebvizPluginABC):
             strategy_folder: str,
             all_models: str,
             highlighted_models: str,
-            button: int,
             directory_save: str,
             color_map: str,
         ):
@@ -316,7 +326,7 @@ class ReservoirViewer(WebvizPluginABC):
                 self.root = root
                 self.benchmark = benchmark
                 self.folder2d = folder2d
-                self.folder_Dist_Matr = folder_Dist_Matr
+                self.folder_Dist_Matr = folder_dist_matr
                 self.chart_type = chart_type
                 self.layout_curve = layout_curve
                 self.clustering_method = clustering_method
@@ -363,19 +373,22 @@ class ReservoirViewer(WebvizPluginABC):
                     self.color_map,
                 ]
 
-                rvConfig = rvconfig(args)
+                rv_config = rvconfig(args)
 
                 full_path = os.path.realpath(__file__)
 
                 if self.chart_type == "smallmultiples":
                     path = (
-                        os.path.dirname(full_path) + "//generated_images//sm" + str(0) + ".png"
+                        os.path.dirname(full_path)
+                        + "//generated_images//sm"
+                        + str(0)
+                        + ".png"
                     )
                     image = Path(path)
                     self.image_url = WEBVIZ_ASSETS.add(image)
 
                 if self.chart_type == "pixelization":
-                    image = Path(rvConfig.save_dir)
+                    image = Path(rv_config.save_dir)
                     self.image_url = WEBVIZ_ASSETS.add(image)
 
                 div_style = {
