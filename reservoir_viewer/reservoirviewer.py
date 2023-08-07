@@ -118,14 +118,14 @@ class ReservoirViewer(WebvizPluginABC):
                             get_inputs(
                                 "input-all_models",
                                 "name of txt file with all models",
-                                "File All Models",
+                                "All Models File",
                             )
                         ),
                         html.Div(
                             get_inputs(
                                 "input-highlighted_models",
                                 "name of highlighted models files",
-                                "File Highlighted Models",
+                                "Highlighted Models File",
                             )
                         ),
                         html.Div(
@@ -263,7 +263,7 @@ class ReservoirViewer(WebvizPluginABC):
                         html.Div(id=self.div_id, children="Image will appear below"),
                     ]
                 ),
-                html.Div(id=self.div_id),
+                # html.Div(id=self.div_id),
             ]
         )
 
@@ -319,6 +319,7 @@ class ReservoirViewer(WebvizPluginABC):
             strategy_folder: str,
             all_models: str,
             highlighted_models: str,
+            button: int,
             directory_save: str,
             color_map: str,
         ):
