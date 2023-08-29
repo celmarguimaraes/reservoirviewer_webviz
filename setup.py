@@ -14,6 +14,7 @@ setup(
     entry_points={
         "webviz_config_plugins": [
             "ReservoirViewer = reservoir_viewer:ReservoirViewer",
+            "FileParser = reservoir_viewer:FileParser",
         ]
     },
     install_requires=[

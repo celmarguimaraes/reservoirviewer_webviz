@@ -1,26 +1,29 @@
 # ------------------------------
 options:
-  menu:
-    show_logo: true
-    bar_position: left
-    drawer_position: left
-    initially_pinned: true
-    initially_collapsed: true
+    menu:
+        show_logo: true
+        bar_position: left
+        drawer_position: left
+        initially_pinned: true
+        initially_collapsed: true
 
 # ------------------------------
 layout:
-  - section: Webviz Boilerplate
-    content:
-      # ------------------------------
+    - section: Webviz Boilerplate
+      content:
+          # ------------------------------
 
-      - page: Front page
-        icon: home
-        content:
-          - This is a `webviz` instance created from a configuration file.
-          - Open menu on the left to select page for demo plugins.
+          - page: Front page
+            icon: home
+            content:
+                - This is a `webviz` instance created from a configuration file.
+                - Open menu on the left to select page for demo plugins.
 
-  - section: Plugins
-    content:
-      - page: Reservoir Viewer
-        content:
-          - ReservoirViewer:
+    - section: Plugins
+      content:
+          - page: Reservoir Viewer
+            content:
+                - ReservoirViewer:
+          - page: File Parser
+            content:
+                - FileParser:
