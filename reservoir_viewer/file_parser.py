@@ -2,6 +2,8 @@ from dash import callback
 from dash import dcc, html, Input, Output, ctx
 from webviz_config import WebvizPluginABC
 from webviz_config.webviz_assets import WEBVIZ_ASSETS
+from reservoir_viewer.src.parser.parse_prop_files import ParseProperties
+from pathlib import Path
 
 from reservoir_viewer.src.components.html_components import (
     get_inputs,
@@ -46,7 +48,7 @@ class FileParser(WebvizPluginABC):
                         get_inputs(
                             "file-property-parser",
                             "desired property",
-                            "Directory for File",
+                            "Desired Property",
                         )
                     ]
                 ),
@@ -85,7 +87,11 @@ class FileParser(WebvizPluginABC):
         )
         def generate(file: str, property_parser: str, save_dir: str, button: int):
             if self.button_id == ctx.triggered_id:
-                self.input_file = file
+                self.input_file = Path(file)
                 self.file_property = property_parser
-                self.directory_save = save_dir
-                return 'Generated parsed file'
+                self.directory_save = Path(save_dir)
+                print(self.input_file)
+                print(self.directory_save)
+
+                parser = ParseProperties()
+                parser.parse_file(self.directory_save, self.input_file, self.file_property)
