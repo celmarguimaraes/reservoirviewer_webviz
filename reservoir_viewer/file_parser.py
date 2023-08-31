@@ -90,8 +90,6 @@ class FileParser(WebvizPluginABC):
                 self.input_file = Path(file)
                 self.file_property = property_parser
                 self.directory_save = Path(save_dir)
-                print(self.input_file)
-                print(self.directory_save)
 
                 parser = ParseProperties()
                 parser.parse_file(self.directory_save, self.input_file, self.file_property)
