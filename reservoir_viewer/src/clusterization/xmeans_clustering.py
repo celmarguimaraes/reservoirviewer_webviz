@@ -1,13 +1,25 @@
 from pyclustering.cluster.xmeans import xmeans
+from .clusterization_utils import CLusterizationUtils
 
-class Xmeans:
+
+class XmeansClusterization:
     def __init__(self, data, iterations, max_clusters):
         self.data = data
         self.iterations = iterations
         self.max_clusters = max_clusters
 
     def cluster_models(self):
-        xmeans_instance = xmeans(data=self.data, kmax=self.max_clusters, tolerance=self.iterations)
+        clusters_list = []
+        utils = CLusterizationUtils(self.data)
+        feature_vector = utils.create_feature_vector()
+        xmeans_instance = xmeans(
+            data=feature_vector, kmax=self.max_clusters, tolerance=self.iterations
+        )
         xmeans_instance.process()
 
-        return xmeans_instance.get_centers()
+        clusters = xmeans_instance.get_clusters()
+
+        for cluster in clusters:
+            clusters_list = clusters_list + cluster
+
+        return clusters_list

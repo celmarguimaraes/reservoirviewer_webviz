@@ -3,12 +3,15 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import warnings
 from pandas import DataFrame
 
 from .curve import Curve
 from .dimension import Dimension
 from .snake_curve import SnakeCurve
+from .clusterization.xmeans_clustering import XmeansClusterization
 
+np.warnings = warnings
 
 class Pixelization:
     def __init__(self, path: str, curve: str) -> None:
@@ -73,7 +76,10 @@ class Pixelization:
         shape: int = math.ceil(math.sqrt(self.num_of_models))
         prev_value = math.ceil(((shape**2) - self.num_of_models) / 2)
         next_value = math.floor(((shape**2) - self.num_of_models) / 2)
-        matrix = self.generate_model_matrix()
+        # matrix = self.generate_model_matrix()
+        matrix = self.reorder_matrix_based_on_cluster(
+            self.generate_model_matrix(), 0.5, 5
+        )
         dimension = Dimension(shape, shape)
         curve = self.set_curve(self.curve, shape * shape, dimension)
 
@@ -139,3 +145,15 @@ class Pixelization:
             plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")
+
+    def get_clusters(self, matrix, iterations, max_clusters):
+        xmeans_instance = XmeansClusterization(matrix, iterations, max_clusters)
+        return xmeans_instance.cluster_models()
+
+    def reorder_matrix_based_on_cluster(self, matrix, iterations, max_clusters):
+        reordered_matrix = []
+        clusters = self.get_clusters(matrix, iterations, max_clusters)
+        for cluster in clusters:
+            reordered_matrix.append(matrix[cluster])
+
+        return reordered_matrix
