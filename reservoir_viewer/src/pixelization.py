@@ -13,6 +13,7 @@ from .clusterization.xmeans_clustering import XmeansClusterization
 
 np.warnings = warnings
 
+
 class Pixelization:
     def __init__(self, path: str, curve: str) -> None:
         self.path = path
@@ -61,7 +62,7 @@ class Pixelization:
             self.num_of_models, self.max_i, self.max_j
         )
 
-    def draw(self):
+    def draw(self, iterations, max_clusters):
         """
         Draws the pixelization based on the model matrix.
 
@@ -76,9 +77,8 @@ class Pixelization:
         shape: int = math.ceil(math.sqrt(self.num_of_models))
         prev_value = math.ceil(((shape**2) - self.num_of_models) / 2)
         next_value = math.floor(((shape**2) - self.num_of_models) / 2)
-        # matrix = self.generate_model_matrix()
         matrix = self.reorder_matrix_based_on_cluster(
-            self.generate_model_matrix(), 0.5, 5
+            self.generate_model_matrix(), iterations, max_clusters
         )
         dimension = Dimension(shape, shape)
         curve = self.set_curve(self.curve, shape * shape, dimension)
@@ -97,21 +97,20 @@ class Pixelization:
                     constant_values=np.nan,
                 )
                 list_of_values = np.array(list_of_values).reshape(shape, shape)
-                # list = np.array(list).reshape(shape, shape)[::-1]
                 # Flip every row with odd index - Snake Curve
                 list_of_values = curve.parse_matrix(list_of_values)
                 result.append(list_of_values)
 
         return np.array(result)
 
-    def pad_matrix(self):
+    def pad_matrix(self, iterations, max_clusters):
         """
         It adds NaN value around each submatrix to give a space between each one, making it easier to visualize and distinct the submatrices.
 
         Returns:
             Numpy array with NaN elements on the edges.
         """
-        matrix = self.draw()
+        matrix = self.draw(iterations, max_clusters)
         padded_array = list()
         for element in matrix:
             padded_array.append(
@@ -124,15 +123,16 @@ class Pixelization:
         list_of_values = self.read_to_list()
         return np.nanmin(list_of_values), np.nanmax(list_of_values)
 
-    def generate_image(self, path: str, color_map: str) -> None:
+    def generate_image(
+        self, path: str, color_map: str, iterations, max_clusters
+    ) -> None:
         """
         It generates and save the image based on the matrix (multidimensional array) received.
 
         Returns:
             None.
         """
-        # array = self.pad_matrix()[::-1]
-        array = np.flip(self.pad_matrix(), 0)
+        array = np.flip(self.pad_matrix(iterations, max_clusters), 0)
         array = np.array(np.dstack(np.array_split(array, self.max_i)))
         array = array.reshape(array.shape[0] * array.shape[1], array.shape[2])
         values = self.get_min_and_max()

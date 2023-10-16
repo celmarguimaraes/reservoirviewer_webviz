@@ -36,7 +36,7 @@ class rvconfig:
         )
         self.strategies.append(Strategy(configs[17], configs[18]))
 
-        settingDrawConfigs(self)
+        settingDrawConfigs(self, self.num_iterations, self.max_clusters)
 
 
 def getStrategies(self):
@@ -49,21 +49,7 @@ def getProperties(self):
         print("Propriedade: " + prop.getProperty())
 
 
-# def createWellList(self):
-#     estrategias = []
-
-#     if (~(self.strategies.empty())):
-#         for strategy in self.strategies:
-#             name = strategy.getName()
-#             path = strategy.getPath()
-#             wellList = WellList(name)
-#             estrategias.append(wellList)
-#             estrategias[i].loadFile(path)
-
-#     return estrategias
-
-
-def settingDrawConfigs(self):
+def settingDrawConfigs(self, iterations, max_clusters):
     for propIndex, p in enumerate(self.properties):
         print("Pegando Propriedade")
         clustering = None
@@ -74,7 +60,9 @@ def settingDrawConfigs(self):
             print("Executing Pixelization")
             pixelization = Pixelization(file_2d_path, self.layout_curve)
             print("Look we got here somehow")
-            pixelization.generate_image(self.save_dir, self.color_map)
+            pixelization.generate_image(
+                self.save_dir, self.color_map, iterations, max_clusters
+            )
 
         elif self.chart_type == "smallmultiples":
             print("Executing Small Multiples")
