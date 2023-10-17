@@ -7,34 +7,33 @@ from .strategy import Strategy
 class rvconfig:
     def __init__(self, configs):
         self.root = configs[0]
-        self.benchmark = configs[1]
-        self.folder2d = configs[2]
-        self.folder_Dist_Matr = configs[3]
-        self.chart_type = configs[4]
-        self.layout_curve = configs[5]
-        self.clust_method = configs[6]
-        self.dist_matrix = configs[7]
-        self.min_clusters = int(configs[8])
-        self.max_clusters = int(configs[9])
-        self.num_iterations = int(configs[10])
-        self.all_models = configs[19]
-        self.hl_models = configs[20]
+        self.folder2d = configs[1]
+        self.chart_type = configs[2]
+        self.layout_curve = configs[3]
+        self.clust_method = configs[4]
+        self.min_clusters = int(configs[5])
+        self.max_clusters = int(configs[6])
+        self.num_iterations = int(configs[7])
         self.properties = []
         self.strategies = []
-        self.save_dir = configs[21]
-        self.color_map = configs[22]
+        self.save_dir = configs[10]
+        self.color_map = configs[11]
 
         self.properties.append(
             Property(
-                configs[11],
-                configs[12],
-                configs[13],
-                configs[14],
-                configs[15],
-                configs[16],
+                # configs[8],
+                "hey",
+                "hey",
+                # configs[8],
+                configs[8],
+                "hey",
+                # configs[10],
+                configs[9],
+                "hey"
+                # configs[11],
             )
         )
-        self.strategies.append(Strategy(configs[17], configs[18]))
+        self.strategies.append(Strategy("hey", "hey"))
 
         settingDrawConfigs(self, self.num_iterations, self.max_clusters)
 
