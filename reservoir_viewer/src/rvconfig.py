@@ -42,7 +42,6 @@ def settingDrawConfigs(self, iterations, max_clusters):
         clustering = None
         # TODO this.loadStaticMapModels(propName, self.root/self.file2d/self.getNullBlocks, meanType) (parte do iza)
         file_2d_path = self.root + "/" + self.folder2d + "/" + p.getFile2d()
-        print(file_2d_path)
         if self.chart_type == "pixelization":
             print("Executing Pixelization")
             pixelization = Pixelization(file_2d_path, self.layout_curve)
