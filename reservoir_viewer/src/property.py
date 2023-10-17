@@ -1,13 +1,7 @@
 class Property:
-    def __init__(
-        self, name, function, file2d, file_dist_matr, sorting_algor, file_feat_vector
-    ):
-        self.name = name
-        self.function = function
+    def __init__(self, file2d, sorting_algor):
         self.file2d = file2d
-        self.file_dist_matr = file_dist_matr
         self.sorting_algor = sorting_algor
-        self.file_feat_vector = file_feat_vector
 
     def getFile2d(self):
         return self.file2d

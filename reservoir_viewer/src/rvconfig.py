@@ -1,7 +1,6 @@
 from .pixelization import Pixelization
 from .property import Property
 from .small_multiples import SmallMultiples
-from .strategy import Strategy
 
 
 class rvconfig:
@@ -15,25 +14,15 @@ class rvconfig:
         self.max_clusters = int(configs[6])
         self.num_iterations = int(configs[7])
         self.properties = []
-        self.strategies = []
         self.save_dir = configs[10]
         self.color_map = configs[11]
 
         self.properties.append(
             Property(
-                # configs[8],
-                "hey",
-                "hey",
-                # configs[8],
                 configs[8],
-                "hey",
-                # configs[10],
                 configs[9],
-                "hey"
-                # configs[11],
             )
         )
-        self.strategies.append(Strategy("hey", "hey"))
 
         settingDrawConfigs(self, self.num_iterations, self.max_clusters)
 
@@ -50,7 +39,6 @@ def getProperties(self):
 
 def settingDrawConfigs(self, iterations, max_clusters):
     for propIndex, p in enumerate(self.properties):
-        print("Pegando Propriedade")
         clustering = None
         # TODO this.loadStaticMapModels(propName, self.root/self.file2d/self.getNullBlocks, meanType) (parte do iza)
         file_2d_path = self.root + "/" + self.folder2d + "/" + p.getFile2d()
@@ -58,7 +46,6 @@ def settingDrawConfigs(self, iterations, max_clusters):
         if self.chart_type == "pixelization":
             print("Executing Pixelization")
             pixelization = Pixelization(file_2d_path, self.layout_curve)
-            print("Look we got here somehow")
             pixelization.generate_image(
                 self.save_dir, self.color_map, iterations, max_clusters
             )
@@ -70,5 +57,5 @@ def settingDrawConfigs(self, iterations, max_clusters):
             smallMultiples.draw_small_multiples(propIndex)
         else:
             raise Exception(
-                "Tipo de desenho não reconhecido, favor escolher entre Pixelization e Smallmultiples"
+                "Visualization type not recognized. Please choose between Pixelization and Smallmultiples"
             )
