@@ -31,7 +31,6 @@ class ReservoirViewer(WebvizPluginABC):
         self.input_max_clusters = "input-max_clusters"
         self.input_iterations = "input-iterations"
         self.input_property_file_2d = "input-property-file-2d"
-        self.input_property_sorting_alg = "input-property-sorting-alg"
         self.button_id = "submit-button"
         self.div_id = "output-state"
         self.input_directory_save = "directory-save"
@@ -116,13 +115,6 @@ class ReservoirViewer(WebvizPluginABC):
                     children=[
                         get_section_title("Prop. Configuration"),
                         html.Div(
-                            get_inputs(
-                                "input-property-sorting-alg",
-                                "sorting algorithm",
-                                "Sorting Algorithm",
-                            )
-                        ),
-                        html.Div(
                             [
                                 dcc.Dropdown(
                                     style=get_dropdown_style(),
@@ -199,7 +191,6 @@ class ReservoirViewer(WebvizPluginABC):
                 Input(self.input_max_clusters, "value"),
                 Input(self.input_iterations, "value"),
                 Input(self.input_property_file_2d, "value"),
-                Input(self.input_property_sorting_alg, "value"),
                 Input(self.button_id, "n_clicks"),
                 Input(self.input_directory_save, "value"),
                 Input(self.color_map, "value"),
@@ -215,7 +206,6 @@ class ReservoirViewer(WebvizPluginABC):
             max_clusters: int,
             iterations: int,
             property_file: str,
-            property_sorting_alg: str,
             button: int,
             directory_save: str,
             color_map: str,
@@ -230,7 +220,6 @@ class ReservoirViewer(WebvizPluginABC):
                 self.max_clusters = max_clusters
                 self.iterations = iterations
                 self.property_file = property_file
-                self.property_sorting_alg = (property_sorting_alg,)
                 self.directory_save = directory_save
                 self.color_map = color_map
 
@@ -244,22 +233,14 @@ class ReservoirViewer(WebvizPluginABC):
                     self.max_clusters,
                     self.iterations,
                     self.property_file,
-                    self.property_sorting_alg,
                     self.directory_save,
                     self.color_map,
                 ]
 
                 rv_config = rvconfig(args)
-                full_path = os.path.realpath(__file__)
 
                 if self.chart_type == "smallmultiples":
-                    path = (
-                        os.path.dirname(full_path)
-                        + "//generated_images//sm"
-                        + str(0)
-                        + ".png"
-                    )
-                    image = Path(path)
+                    image = Path(rv_config.save_dir)
                     self.image_url = WEBVIZ_ASSETS.add(image)
 
                 if self.chart_type == "pixelization":

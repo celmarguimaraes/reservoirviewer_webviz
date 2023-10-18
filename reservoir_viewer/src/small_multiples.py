@@ -1,15 +1,20 @@
 import csv
 import math
 import os
+import warnings
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from matplotlib import gridspec
+from pandas import DataFrame
+from .clusterization.xmeans_clustering import XmeansClusterization
+
+np.warnings = warnings
 
 
 class SmallMultiples:
-    def __init__(self, path, curve):
+    def __init__(self, path):
         self.path = path
         with open(path) as csv_file:
             csv_reader = csv.reader(csv_file, delimiter=",")
@@ -21,11 +26,7 @@ class SmallMultiples:
                     self.num_of_models: int = pd.to_numeric(row[2])
                 lineCount = lineCount + 1
         # self.curve: Curve = curve
-        self.colorMap = "jet"
-        print("i, j, k: ", self.max_i, self.max_j, self.num_of_models)
         self.final_grid = self.read_file(path)
-        self.final_dict = {}
-        self.new_grid_order = []
 
     # Getters
     def get_max_i(self) -> int:
@@ -37,29 +38,13 @@ class SmallMultiples:
     def get_num_of_models(self) -> int:
         return self.num_of_models
 
-    # def get_curve(self) -> Curve:
-    #     return self.curve
-
     def read_file(self, path):
-        file_content = []
-        count_line = 0
-
-        with open(path) as csv_file:
-            for i in range(2):
-                next(csv_file)
-            for line in csv_file:
-                line.strip()
-                if line == "nan" or line == "nan\n":
-                    file_content.append(-1)
-                else:
-                    file_content.append(int(float(line.strip())))
-                count_line = count_line + 1
-
-        print("Reservoir lines in intermediary file: ", count_line)
-        file_content = np.array(file_content)
-        grid = file_content.reshape(self.num_of_models, self.max_i * self.max_j)
-
-        return grid
+        df = DataFrame(pd.read_csv(path))
+        column = DataFrame(df[df.columns[0]]).squeeze().tolist()
+        column_list = [np.float16(item) for item in column]
+        return np.array(column_list, dtype=np.float16).reshape(
+            self.num_of_models, self.max_i, self.max_j
+        )
 
     def mergeSort(self, alist, cluster_dict):
         if len(alist) > 1:
@@ -92,19 +77,21 @@ class SmallMultiples:
                 j = j + 1
                 k = k + 1
 
-    def reorder_with_clusters(self, clustering):
-        clustering.clusterGrid(self.final_grid)
-        self.new_grid_order = [m for m in range((self.num_of_models))]
-        cluster_dict = clustering.get_dict()
-        self.mergeSort(self.new_grid_order, cluster_dict)
-        self.new_grid_order = np.array(self.new_grid_order)
+    def get_clusters(self, matrix, iterations, max_clusters):
+        xmeans_instance = XmeansClusterization(matrix, iterations, max_clusters)
+        return xmeans_instance.cluster_models()
 
-        self.final_grid = self.final_grid[self.new_grid_order]
-        self.final_dict = {k: cluster_dict[k] for k in self.new_grid_order}
+    def reorder_with_clusters(self, matrix, iterations, max_clusters):
+        reordered_matrix = []
+        clusters = self.get_clusters(matrix, iterations, max_clusters)
+        for cluster in clusters:
+            reordered_matrix.append(matrix[cluster])
 
-    def draw_small_multiples(self, prop_index):
+        return reordered_matrix
+
+    def draw_small_multiples(self, save_dir, color_map, iterations, max_clusters):
         fig = plt.figure(figsize=(self.max_j, self.max_i))
-        grid = self.final_grid.reshape(self.num_of_models, self.max_i, self.max_j)
+        grid = self.reorder_with_clusters(self.final_grid, iterations, max_clusters)
         dimension = math.ceil(math.sqrt(self.num_of_models))
 
         gs = gridspec.GridSpec(dimension, dimension, wspace=0.01, hspace=0.01)
@@ -115,7 +102,11 @@ class SmallMultiples:
                 if count < self.num_of_models:
                     ax = plt.subplot(gs[i, j])
                     ax.imshow(
-                        grid[count], cmap="jet", interpolation="none", vmin=0, vmax=256
+                        grid[count],
+                        cmap=color_map,
+                        interpolation="none",
+                        vmin=0,
+                        vmax=256,
                     )
 
                     ax.set_xlim(-10, self.max_j + 10)
@@ -128,44 +119,4 @@ class SmallMultiples:
                 else:
                     break
 
-        all_axes = fig.get_axes()
-
-        # Delimit the clusters
-        for index, ax in enumerate(all_axes):
-            for sp in ax.spines.values():
-                sp.set_visible(False)
-                if index < self.num_of_models - 1:
-                    if (
-                        self.final_dict[self.new_grid_order[index]]
-                        != self.final_dict[self.new_grid_order[index + 1]]
-                    ):
-                        ax.spines["right"].set_visible(True)
-                        ax.spines["right"].set_linestyle("dashed")
-                if index < self.num_of_models - dimension:
-                    if (
-                        self.final_dict[self.new_grid_order[index]]
-                        != self.final_dict[self.new_grid_order[index + dimension]]
-                    ):
-                        ax.spines["bottom"].set_visible(True)
-                        ax.spines["bottom"].set_linestyle("dashed")
-
-                # Border of the image
-                if ax.get_subplotspec().is_first_row():
-                    ax.spines["top"].set_visible(True)
-                if ax.get_subplotspec().is_last_row():
-                    ax.spines["bottom"].set_visible(True)
-                if ax.get_subplotspec().is_first_col():
-                    ax.spines["left"].set_visible(True)
-                if ax.get_subplotspec().is_last_col():
-                    ax.spines["right"].set_visible(True)
-
-        full_path = os.path.realpath(__file__)
-        path = (
-            os.path.dirname(full_path)
-            + "//generated_images//sm"
-            + str(prop_index)
-            + ".png"
-        )
-        print("Path of the generated_images file: ", path)
-
-        plt.savefig(path)
+        plt.savefig(save_dir)
