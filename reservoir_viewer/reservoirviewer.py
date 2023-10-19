@@ -27,7 +27,6 @@ class ReservoirViewer(WebvizPluginABC):
         self.input_chart_type = "input-chart_type"
         self.input_layout_curve = "input-layout_curve"
         self.input_clustering_method = "input-clustering_method"
-        self.input_min_clusters = "input-min_clusters"
         self.input_max_clusters = "input-max_clusters"
         self.input_iterations = "input-iterations"
         self.input_property_file_2d = "input-property-file-2d"
@@ -50,14 +49,14 @@ class ReservoirViewer(WebvizPluginABC):
                         html.Div(
                             get_inputs(
                                 "input-folder2d",
-                                "name of 2d file folder",
-                                "Directory for 2D Files",
+                                "e.g. C:/Users/youruser/folder",
+                                "Path to 2D Files",
                             )
                         ),
                         html.Div(
                             get_inputs(
                                 "directory-save",
-                                "directory to save generated_images image",
+                                "e.g. C:/Users/youruser/save_images",
                                 "Directory to Save Folder",
                             )
                         ),
@@ -70,7 +69,7 @@ class ReservoirViewer(WebvizPluginABC):
                         html.Div(
                             get_inputs(
                                 "input-property-file-2d",
-                                "name of file-2d",
+                                "e.g. intermediary_file.csv",
                                 "Property 2D File",
                             )
                         ),
@@ -83,29 +82,22 @@ class ReservoirViewer(WebvizPluginABC):
                         html.Div(
                             get_inputs(
                                 "input-clustering_method",
-                                "clustering method",
+                                "e.g. xmeans",
                                 "Clustering Method",
                             )
                         ),
                         html.Div(
                             get_inputs(
-                                "input-min_clusters",
-                                "minimum number of clusters",
-                                "Number of Minimum Cluster",
-                            )
-                        ),
-                        html.Div(
-                            get_inputs(
                                 "input-max_clusters",
-                                "maximum number of clusters",
+                                "e.g. 5",
                                 "Number of Maximum Cluster",
                             )
                         ),
                         html.Div(
                             get_inputs(
                                 "input-iterations",
-                                "number of iterations",
-                                "Number of Iterations",
+                                "e.g. 0.075",
+                                "Tolerance",
                             )
                         ),
                     ],
@@ -187,7 +179,6 @@ class ReservoirViewer(WebvizPluginABC):
                 Input(self.input_chart_type, "value"),
                 Input(self.input_layout_curve, "value"),
                 Input(self.input_clustering_method, "value"),
-                Input(self.input_min_clusters, "value"),
                 Input(self.input_max_clusters, "value"),
                 Input(self.input_iterations, "value"),
                 Input(self.input_property_file_2d, "value"),
@@ -202,7 +193,6 @@ class ReservoirViewer(WebvizPluginABC):
             chart_type: str,
             layout_curve: str,
             clustering_method: str,
-            min_clusters: int,
             max_clusters: int,
             iterations: int,
             property_file: str,
@@ -216,7 +206,6 @@ class ReservoirViewer(WebvizPluginABC):
                 self.chart_type = chart_type
                 self.layout_curve = layout_curve
                 self.clustering_method = clustering_method
-                self.min_clusters = min_clusters
                 self.max_clusters = max_clusters
                 self.iterations = iterations
                 self.property_file = property_file
@@ -229,7 +218,6 @@ class ReservoirViewer(WebvizPluginABC):
                     self.chart_type,
                     self.layout_curve,
                     self.clustering_method,
-                    self.min_clusters,
                     self.max_clusters,
                     self.iterations,
                     self.property_file,

@@ -28,15 +28,11 @@ class SmallMultiples:
         # self.curve: Curve = curve
         self.final_grid = self.read_file(path)
 
-    # Getters
-    def get_max_i(self) -> int:
-        return self.max_i
-
-    def get_max_j(self) -> int:
-        return self.max_j
-
-    def get_num_of_models(self) -> int:
-        return self.num_of_models
+    def get_min_max_values(self):
+        linearized = np.array(self.final_grid).reshape(
+            self.num_of_models * self.max_i * self.max_j
+        )
+        return np.nanmin(linearized), np.nanmax(linearized)
 
     def read_file(self, path):
         df = DataFrame(pd.read_csv(path))
@@ -62,6 +58,7 @@ class SmallMultiples:
         fig = plt.figure(figsize=(self.max_j, self.max_i))
         grid = self.reorder_with_clusters(self.final_grid, iterations, max_clusters)
         dimension = math.ceil(math.sqrt(self.num_of_models))
+        limit_values = self.get_min_max_values()
 
         gs = gridspec.GridSpec(dimension, dimension, wspace=0.01, hspace=0.01)
 
@@ -74,8 +71,8 @@ class SmallMultiples:
                         grid[count],
                         cmap=color_map,
                         interpolation="none",
-                        vmin=0,
-                        vmax=256,
+                        vmin=limit_values[0],
+                        vmax=limit_values[1],
                     )
 
                     ax.set_xlim(-10, self.max_j + 10)

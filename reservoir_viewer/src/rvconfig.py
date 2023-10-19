@@ -9,12 +9,11 @@ class rvconfig:
         self.chart_type = configs[2]
         self.layout_curve = configs[3]
         self.clust_method = configs[4]
-        self.min_clusters = int(configs[5])
-        self.max_clusters = int(configs[6])
-        self.num_iterations = int(configs[7])
-        self.file2d = configs[8]
-        self.save_dir = configs[9]
-        self.color_map = configs[10]
+        self.max_clusters = int(configs[5])
+        self.num_iterations = int(configs[6])
+        self.file2d = configs[7]
+        self.save_dir = configs[8]
+        self.color_map = configs[9]
 
         settingDrawConfigs(self, self.num_iterations, self.max_clusters)
 
@@ -30,7 +29,7 @@ def settingDrawConfigs(self, iterations, max_clusters):
 
     elif self.chart_type == "smallmultiples":
         print("Executing Small Multiples")
-        smallMultiples = SmallMultiples(file_2d_path, self.layout_curve)
+        smallMultiples = SmallMultiples(file_2d_path)
         smallMultiples.draw_small_multiples(
             self.save_dir, self.color_map, iterations, max_clusters
         )
