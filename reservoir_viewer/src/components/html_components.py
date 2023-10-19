@@ -20,7 +20,7 @@ def get_inputs(div_id: str, placeholder: str, label: str):
                     debounce=False,
                     autoComplete="on",
                     required=False,
-                    size="100",
+                    size="70",
                     style=get_input_style(),
                 ),
             ],

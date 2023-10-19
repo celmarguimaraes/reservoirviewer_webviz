@@ -40,50 +40,31 @@ class ReservoirViewer(WebvizPluginABC):
     @property
     def layout(self):
         return html.Div(
-            [
+            style={"display": "flex", "flex-direction": "row"},
+            children=[
                 html.Div(
                     style=get_section_div_style(),
                     children=[
-                        get_section_title("Folders Configuration"),
-                        html.Div(get_inputs("input-root", "root path", "Path")),
+                        get_section_title("Configurations"),
                         html.Div(
                             get_inputs(
                                 "input-folder2d",
                                 "e.g. C:/Users/youruser/folder",
-                                "Path to 2D Files",
+                                "Path to Folder to 2D Files",
+                            )
+                        ),
+                        html.Div(
+                            get_inputs(
+                                "input-property-file-2d",
+                                "e.g. intermediary_file.csv",
+                                "Property 2D File Name",
                             )
                         ),
                         html.Div(
                             get_inputs(
                                 "directory-save",
-                                "e.g. C:/Users/youruser/save_images",
-                                "Directory to Save Folder",
-                            )
-                        ),
-                    ],
-                ),
-                html.Div(
-                    style=get_section_div_style(),
-                    children=[
-                        get_section_title("Files Configuration"),
-                        html.Div(
-                            get_inputs(
-                                "input-property-file-2d",
-                                "e.g. intermediary_file.csv",
-                                "Property 2D File",
-                            )
-                        ),
-                    ],
-                ),
-                html.Div(
-                    style=get_section_div_style(),
-                    children=[
-                        get_section_title("Clusters Configuration"),
-                        html.Div(
-                            get_inputs(
-                                "input-clustering_method",
-                                "e.g. xmeans",
-                                "Clustering Method",
+                                "e.g. C:/Users/youruser/save_images/my_image.png",
+                                "Path to Save Folder",
                             )
                         ),
                         html.Div(
@@ -100,12 +81,6 @@ class ReservoirViewer(WebvizPluginABC):
                                 "Tolerance",
                             )
                         ),
-                    ],
-                ),
-                html.Div(
-                    style=get_section_div_style(),
-                    children=[
-                        get_section_title("Prop. Configuration"),
                         html.Div(
                             [
                                 dcc.Dropdown(
@@ -158,14 +133,9 @@ class ReservoirViewer(WebvizPluginABC):
                                 ),
                             ]
                         ),
-                    ],
-                ),
-                html.Br(),
-                html.Div(
-                    [
-                        html.Button(id="submit-button", n_clicks=0, children="Submit"),
+                        html.Button(id="submit-button", n_clicks=0, children="Generate Image"),
                         html.Div(id=self.div_id, children="Image will appear below"),
-                    ]
+                    ],
                 ),
             ]
         )
@@ -174,11 +144,9 @@ class ReservoirViewer(WebvizPluginABC):
         @callback(
             Output(self.div_id, "children"),
             [
-                Input(self.input_root, "value"),
                 Input(self.input_folder2d, "value"),
                 Input(self.input_chart_type, "value"),
                 Input(self.input_layout_curve, "value"),
-                Input(self.input_clustering_method, "value"),
                 Input(self.input_max_clusters, "value"),
                 Input(self.input_iterations, "value"),
                 Input(self.input_property_file_2d, "value"),
@@ -188,11 +156,9 @@ class ReservoirViewer(WebvizPluginABC):
             ],
         )
         def update_text(
-            root: Path,
-            folder2d: str,
+            folder2d: Path,
             chart_type: str,
             layout_curve: str,
-            clustering_method: str,
             max_clusters: int,
             iterations: int,
             property_file: str,
@@ -201,11 +167,9 @@ class ReservoirViewer(WebvizPluginABC):
             color_map: str,
         ):
             if self.button_id == ctx.triggered_id:  # if the submit button is clicked
-                self.root = root
                 self.folder2d = folder2d
                 self.chart_type = chart_type
                 self.layout_curve = layout_curve
-                self.clustering_method = clustering_method
                 self.max_clusters = max_clusters
                 self.iterations = iterations
                 self.property_file = property_file
@@ -213,11 +177,9 @@ class ReservoirViewer(WebvizPluginABC):
                 self.color_map = color_map
 
                 args = [
-                    self.root,
                     self.folder2d,
                     self.chart_type,
                     self.layout_curve,
-                    self.clustering_method,
                     self.max_clusters,
                     self.iterations,
                     self.property_file,
@@ -237,7 +199,7 @@ class ReservoirViewer(WebvizPluginABC):
 
                 div_style = {
                     "width": "80vw",
-                    "align-items": "center",
+                    "align-items": "right",
                     "margin": "0.5em",
                 }
 
