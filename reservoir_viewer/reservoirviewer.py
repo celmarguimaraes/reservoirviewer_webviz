@@ -50,7 +50,7 @@ class ReservoirViewer(WebvizPluginABC):
                             get_inputs(
                                 "input-folder2d",
                                 "e.g. C:/Users/youruser/folder",
-                                "Path to Folder to 2D Files",
+                                "Path to 2D Files Folder",
                             )
                         ),
                         html.Div(
