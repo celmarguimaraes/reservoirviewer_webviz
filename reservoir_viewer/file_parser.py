@@ -2,7 +2,7 @@ from dash import callback
 from dash import dcc, html, Input, Output, ctx
 from webviz_config import WebvizPluginABC
 from webviz_config.webviz_assets import WEBVIZ_ASSETS
-from reservoir_viewer.src.parser.parse_prop_files import ParseProperties
+from reservoir_viewer.src.parser.parse_prop_files import save_new_dataset
 from pathlib import Path
 
 from reservoir_viewer.src.components.html_components import (
@@ -91,7 +91,6 @@ class FileParser(WebvizPluginABC):
                 self.file_property = property_parser
                 self.directory_save = Path(save_dir)
 
-                parser = ParseProperties()
-                parser.parse_file(
+                save_new_dataset(
                     self.directory_save, self.input_file, self.file_property
                 )

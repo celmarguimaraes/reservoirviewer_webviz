@@ -8,28 +8,26 @@ class rvconfig:
         self.chart_type = configs[1]
         self.layout_curve = configs[2]
         self.max_clusters = int(configs[3])
-        self.num_iterations = int(configs[4])
-        self.file2d = configs[5]
-        self.save_dir = configs[6]
-        self.color_map = configs[7]
+        self.save_dir = configs[4]
+        self.color_map = configs[5]
+        self.property = configs[6]
 
-        settingDrawConfigs(self, self.num_iterations, self.max_clusters)
+        settingDrawConfigs(self, self.max_clusters)
 
 
-def settingDrawConfigs(self, iterations, max_clusters):
-    file_2d_path = self.folder2d + "/" + self.file2d
+def settingDrawConfigs(self, max_clusters):
     if self.chart_type == "pixelization":
         print("Executing Pixelization")
-        pixelization = Pixelization(file_2d_path, self.layout_curve)
+        pixelization = Pixelization(self.folder2d, self.layout_curve, self.property)
         pixelization.generate_image(
-            self.save_dir, self.color_map, iterations, max_clusters
+            self.save_dir, self.color_map, max_clusters
         )
 
     elif self.chart_type == "smallmultiples":
         print("Executing Small Multiples")
-        smallMultiples = SmallMultiples(file_2d_path)
+        smallMultiples = SmallMultiples(self.folder2d, self.property)
         smallMultiples.draw_small_multiples(
-            self.save_dir, self.color_map, iterations, max_clusters
+            self.save_dir, self.color_map, max_clusters
         )
     else:
         raise Exception(

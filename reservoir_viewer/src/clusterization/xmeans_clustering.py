@@ -3,9 +3,8 @@ from .clusterization_utils import CLusterizationUtils
 
 
 class XmeansClusterization:
-    def __init__(self, data, iterations, max_clusters):
+    def __init__(self, data, max_clusters):
         self.data = data
-        self.iterations = iterations
         self.max_clusters = max_clusters
 
     def cluster_models(self):
@@ -13,7 +12,7 @@ class XmeansClusterization:
         utils = CLusterizationUtils(self.data)
         feature_vector = utils.create_feature_vector()
         xmeans_instance = xmeans(
-            data=feature_vector, kmax=self.max_clusters, tolerance=self.iterations
+            data=feature_vector, kmax=self.max_clusters 
         )
         xmeans_instance.process()
 

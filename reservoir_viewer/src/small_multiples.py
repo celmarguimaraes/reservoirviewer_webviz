@@ -4,61 +4,56 @@ import os
 import warnings
 
 import matplotlib.pyplot as plt
+from matplotlib import cm, colors
 import numpy as np
 import pandas as pd
 from matplotlib import gridspec
 from pandas import DataFrame
 from .clusterization.xmeans_clustering import XmeansClusterization
 
+from reservoir_viewer.src.parser.parse_prop_files import parse_file
 np.warnings = warnings
 
 
 class SmallMultiples:
-    def __init__(self, path):
+    def __init__(self, path, properties):
         self.path = path
-        with open(path) as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=",")
-            lineCount = 0
-            for row in csv_reader:
-                if lineCount == 0:
-                    self.max_i: int = pd.to_numeric(row[0])
-                    self.max_j: int = pd.to_numeric(row[1])
-                    self.num_of_models: int = pd.to_numeric(row[2])
-                lineCount = lineCount + 1
+        self.file = parse_file(path, properties)
+        self.max_i: int = int(self.file.iloc[-1, 0])
+        self.max_j: int = int(self.file.iloc[-1, 1])
+        self.num_of_models: int = int(self.file.iloc[-1, 2])
         # self.curve: Curve = curve
-        self.final_grid = self.read_file(path)
 
-    def get_min_max_values(self):
-        linearized = np.array(self.final_grid).reshape(
-            self.num_of_models * self.max_i * self.max_j
-        )
-        return np.nanmin(linearized), np.nanmax(linearized)
+    def get_min_max_values(self, grid):
+        return np.nanmin(grid), np.nanmax(grid)
 
-    def read_file(self, path):
-        df = DataFrame(pd.read_csv(path))
-        column = DataFrame(df[df.columns[0]]).squeeze().tolist()
-        column_list = [np.float16(item) for item in column]
-        return np.array(column_list, dtype=np.float16).reshape(
+    def read_file(self):
+        column = DataFrame(self.file[self.file.columns[3]]).squeeze().tolist()
+        return [np.float16(item) for item in column]
+
+    def generate_model_matrix(self):
+        return np.array(self.read_file(), dtype=np.float16).reshape(
             self.num_of_models, self.max_i, self.max_j
         )
 
-    def get_clusters(self, matrix, iterations, max_clusters):
-        xmeans_instance = XmeansClusterization(matrix, iterations, max_clusters)
+    def get_clusters(self, matrix, max_clusters):
+        xmeans_instance = XmeansClusterization(matrix, max_clusters)
         return xmeans_instance.cluster_models()
 
-    def reorder_with_clusters(self, matrix, iterations, max_clusters):
+    def reorder_with_clusters(self, matrix, max_clusters):
         reordered_matrix = []
-        clusters = self.get_clusters(matrix, iterations, max_clusters)
+        clusters = self.get_clusters(matrix, max_clusters)
         for cluster in clusters:
             reordered_matrix.append(matrix[cluster])
 
         return reordered_matrix
 
-    def draw_small_multiples(self, save_dir, color_map, iterations, max_clusters):
+    def draw_small_multiples(self, save_dir, color_map, max_clusters):
         fig = plt.figure(figsize=(self.max_j, self.max_i))
-        grid = self.reorder_with_clusters(self.final_grid, iterations, max_clusters)
+        grid = self.generate_model_matrix()
+        limit_values = self.get_min_max_values(grid)
+        grid_final = self.reorder_with_clusters(grid, max_clusters)
         dimension = math.ceil(math.sqrt(self.num_of_models))
-        limit_values = self.get_min_max_values()
 
         gs = gridspec.GridSpec(dimension, dimension, wspace=0.01, hspace=0.01)
 
@@ -68,7 +63,7 @@ class SmallMultiples:
                 if count < self.num_of_models:
                     ax = plt.subplot(gs[i, j])
                     ax.imshow(
-                        grid[count],
+                        grid_final[count],
                         cmap=color_map,
                         interpolation="none",
                         vmin=limit_values[0],
@@ -85,4 +80,9 @@ class SmallMultiples:
                 else:
                     break
 
+        fig.subplots_adjust(right=0.8)
+        cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
+        cmap = plt.get_cmap(color_map)
+        norm = colors.Normalize(vmin=limit_values[0], vmax=limit_values[1])
+        fig.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), cax=cbar_ax)
         plt.savefig(save_dir)

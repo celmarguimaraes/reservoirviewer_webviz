@@ -34,6 +34,7 @@ class ReservoirViewer(WebvizPluginABC):
         self.div_id = "output-state"
         self.input_directory_save = "directory-save"
         self.color_map = "dropdown-colormap"
+        self.property_name = "property-name"
 
         self.set_callbacks()
 
@@ -55,13 +56,6 @@ class ReservoirViewer(WebvizPluginABC):
                         ),
                         html.Div(
                             get_inputs(
-                                "input-property-file-2d",
-                                "e.g. intermediary_file.csv",
-                                "Property 2D File Name",
-                            )
-                        ),
-                        html.Div(
-                            get_inputs(
                                 "directory-save",
                                 "e.g. C:/Users/youruser/save_images/my_image.png",
                                 "Path to Save Folder",
@@ -76,13 +70,14 @@ class ReservoirViewer(WebvizPluginABC):
                         ),
                         html.Div(
                             get_inputs(
-                                "input-iterations",
-                                "e.g. 0.075",
-                                "Tolerance",
+                                "property-name",
+                                "e.g. GeometricMean",
+                                "Property",
                             )
                         ),
                         html.Div(
                             [
+                                html.P("Filling Curve"),
                                 dcc.Dropdown(
                                     style=get_dropdown_style(),
                                     placeholder="Select the Filling Curve",
@@ -98,6 +93,7 @@ class ReservoirViewer(WebvizPluginABC):
                         ),
                         html.Div(
                             [
+                                html.P("Visualization Technique"),
                                 dcc.Dropdown(
                                     style=get_dropdown_style(),
                                     placeholder="Select the Visualization Technique",
@@ -117,6 +113,7 @@ class ReservoirViewer(WebvizPluginABC):
                         ),
                         html.Div(
                             [
+                                html.P("Colormap"),
                                 dcc.Dropdown(
                                     style=get_dropdown_style(),
                                     placeholder="Select the Colormap",
@@ -133,11 +130,13 @@ class ReservoirViewer(WebvizPluginABC):
                                 ),
                             ]
                         ),
-                        html.Button(id="submit-button", n_clicks=0, children="Generate Image"),
+                        html.Button(
+                            id="submit-button", n_clicks=0, children="Generate Image"
+                        ),
                         html.Div(id=self.div_id, children="Image will appear below"),
                     ],
                 ),
-            ]
+            ],
         )
 
     def set_callbacks(self):
@@ -148,11 +147,10 @@ class ReservoirViewer(WebvizPluginABC):
                 Input(self.input_chart_type, "value"),
                 Input(self.input_layout_curve, "value"),
                 Input(self.input_max_clusters, "value"),
-                Input(self.input_iterations, "value"),
-                Input(self.input_property_file_2d, "value"),
                 Input(self.button_id, "n_clicks"),
                 Input(self.input_directory_save, "value"),
                 Input(self.color_map, "value"),
+                Input(self.property_name, "value")
             ],
         )
         def update_text(
@@ -160,31 +158,28 @@ class ReservoirViewer(WebvizPluginABC):
             chart_type: str,
             layout_curve: str,
             max_clusters: int,
-            iterations: int,
-            property_file: str,
             button: int,
             directory_save: str,
             color_map: str,
+            property_name: str
         ):
             if self.button_id == ctx.triggered_id:  # if the submit button is clicked
                 self.folder2d = folder2d
                 self.chart_type = chart_type
                 self.layout_curve = layout_curve
                 self.max_clusters = max_clusters
-                self.iterations = iterations
-                self.property_file = property_file
                 self.directory_save = directory_save
                 self.color_map = color_map
+                self.property_name = property_name
 
                 args = [
                     self.folder2d,
                     self.chart_type,
                     self.layout_curve,
                     self.max_clusters,
-                    self.iterations,
-                    self.property_file,
                     self.directory_save,
                     self.color_map,
+                    self.property_name
                 ]
 
                 rv_config = rvconfig(args)

@@ -5,6 +5,9 @@ import numpy as np
 import pandas as pd
 import warnings
 from pandas import DataFrame
+from matplotlib import cm, colors
+
+from reservoir_viewer.src.parser.parse_prop_files import parse_file
 
 from .curve import Curve
 from .dimension import Dimension
@@ -15,12 +18,12 @@ np.warnings = warnings
 
 
 class Pixelization:
-    def __init__(self, path: str, curve: str) -> None:
+    def __init__(self, path: str, curve: str, properties: str) -> None:
         self.path = path
-        self.file = DataFrame(pd.read_csv(path))
-        self.max_i: int = int(pd.to_numeric(self.file.columns[0]))
-        self.max_j: int = int(pd.to_numeric(self.file.columns[1]))
-        self.num_of_models: int = int(pd.to_numeric(self.file.columns[2]))
+        self.file = parse_file(path, properties)
+        self.max_i: int = int(self.file.iloc[-1, 0])
+        self.max_j: int = int(self.file.iloc[-1, 1])
+        self.num_of_models: int = int(self.file.iloc[-1, 2])
         self.curve: str = curve
 
     def set_curve(
@@ -44,7 +47,7 @@ class Pixelization:
         """
 
         try:
-            column = DataFrame(self.file[self.file.columns[0]]).squeeze().tolist()
+            column = DataFrame(self.file[self.file.columns[3]]).squeeze().tolist()
             # return [np.float16(item) for item in column][::-1]
             return [np.float16(item) for item in column]
         except:
@@ -58,11 +61,11 @@ class Pixelization:
         Returns:
             Numpy array of shape (num_of_models, max_i, max_j)
         """
-        return np.array(self.read_to_list(), dtype=np.float64).reshape(
+        return np.array(self.read_to_list(), dtype=np.float16).reshape(
             self.num_of_models, self.max_i, self.max_j
         )
 
-    def draw(self, iterations, max_clusters):
+    def draw(self, max_clusters):
         """
         Draws the pixelization based on the model matrix.
 
@@ -78,7 +81,7 @@ class Pixelization:
         prev_value = math.ceil(((shape**2) - self.num_of_models) / 2)
         next_value = math.floor(((shape**2) - self.num_of_models) / 2)
         matrix = self.reorder_matrix_based_on_cluster(
-            self.generate_model_matrix(), iterations, max_clusters
+            self.generate_model_matrix(), max_clusters
         )
         dimension = Dimension(shape, shape)
         curve = self.set_curve(self.curve, shape * shape, dimension)
@@ -103,14 +106,14 @@ class Pixelization:
 
         return np.array(result)
 
-    def pad_matrix(self, iterations, max_clusters):
+    def pad_matrix(self, max_clusters):
         """
         It adds NaN value around each submatrix to give a space between each one, making it easier to visualize and distinct the submatrices.
 
         Returns:
             Numpy array with NaN elements on the edges.
         """
-        matrix = self.draw(iterations, max_clusters)
+        matrix = self.draw(max_clusters)
         padded_array = list()
         for element in matrix:
             padded_array.append(
@@ -124,7 +127,7 @@ class Pixelization:
         return np.nanmin(list_of_values), np.nanmax(list_of_values)
 
     def generate_image(
-        self, path: str, color_map: str, iterations, max_clusters
+        self, path: str, color_map: str, max_clusters
     ) -> None:
         """
         It generates and save the image based on the matrix (multidimensional array) received.
@@ -132,13 +135,16 @@ class Pixelization:
         Returns:
             None.
         """
-        array = np.flip(self.pad_matrix(iterations, max_clusters), 0)
+        array = np.flip(self.pad_matrix(max_clusters), 0)
         array = np.array(np.dstack(np.array_split(array, self.max_i)))
         array = array.reshape(array.shape[0] * array.shape[1], array.shape[2])
         values = self.get_min_and_max()
 
         try:
             plt.figure(figsize=(self.max_j, self.max_i), layout="constrained")
+            cmap = plt.get_cmap(color_map)
+            norm = colors.Normalize(vmin=values[0], vmax=values[1])
+            plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
             plt.imshow(
                 np.flip(array, 1), cmap=color_map, vmin=values[0], vmax=values[1]
             )
@@ -146,13 +152,13 @@ class Pixelization:
         except:
             raise Exception("Something went down while generating the image.")
 
-    def get_clusters(self, matrix, iterations, max_clusters):
-        xmeans_instance = XmeansClusterization(matrix, iterations, max_clusters)
+    def get_clusters(self, matrix, max_clusters):
+        xmeans_instance = XmeansClusterization(matrix, max_clusters)
         return xmeans_instance.cluster_models()
 
-    def reorder_matrix_based_on_cluster(self, matrix, iterations, max_clusters):
+    def reorder_matrix_based_on_cluster(self, matrix, max_clusters):
         reordered_matrix = []
-        clusters = self.get_clusters(matrix, iterations, max_clusters)
+        clusters = self.get_clusters(matrix, max_clusters)
         for cluster in clusters:
             reordered_matrix.append(matrix[cluster])
 
