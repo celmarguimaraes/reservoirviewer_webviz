@@ -24,6 +24,6 @@ layout:
           - page: Reservoir Viewer
             content:
                 - ReservoirViewer:
-          # - page: File Parser
-          #   content:
-          #       - FileParser:
+          - page: File Parser
+            content:
+                - FileParser:

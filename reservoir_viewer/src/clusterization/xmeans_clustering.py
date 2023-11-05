@@ -11,9 +11,7 @@ class XmeansClusterization:
         clusters_list = []
         utils = CLusterizationUtils(self.data)
         feature_vector = utils.create_feature_vector()
-        xmeans_instance = xmeans(
-            data=feature_vector, kmax=self.max_clusters 
-        )
+        xmeans_instance = xmeans(data=feature_vector, kmax=self.max_clusters)
         xmeans_instance.process()
 
         clusters = xmeans_instance.get_clusters()

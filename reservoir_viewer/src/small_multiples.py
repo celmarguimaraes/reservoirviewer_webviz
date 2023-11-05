@@ -12,6 +12,7 @@ from pandas import DataFrame
 from .clusterization.xmeans_clustering import XmeansClusterization
 
 from reservoir_viewer.src.parser.parse_prop_files import parse_file
+
 np.warnings = warnings
 
 

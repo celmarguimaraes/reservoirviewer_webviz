@@ -150,7 +150,7 @@ class ReservoirViewer(WebvizPluginABC):
                 Input(self.button_id, "n_clicks"),
                 Input(self.input_directory_save, "value"),
                 Input(self.color_map, "value"),
-                Input(self.property_name, "value")
+                Input(self.property_name, "value"),
             ],
         )
         def update_text(
@@ -161,7 +161,7 @@ class ReservoirViewer(WebvizPluginABC):
             button: int,
             directory_save: str,
             color_map: str,
-            property_name: str
+            property_name: str,
         ):
             if self.button_id == ctx.triggered_id:  # if the submit button is clicked
                 self.folder2d = folder2d
@@ -179,7 +179,7 @@ class ReservoirViewer(WebvizPluginABC):
                     self.max_clusters,
                     self.directory_save,
                     self.color_map,
-                    self.property_name
+                    self.property_name,
                 ]
 
                 rv_config = rvconfig(args)

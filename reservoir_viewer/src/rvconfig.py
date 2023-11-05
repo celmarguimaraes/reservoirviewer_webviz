@@ -19,16 +19,12 @@ def settingDrawConfigs(self, max_clusters):
     if self.chart_type == "pixelization":
         print("Executing Pixelization")
         pixelization = Pixelization(self.folder2d, self.layout_curve, self.property)
-        pixelization.generate_image(
-            self.save_dir, self.color_map, max_clusters
-        )
+        pixelization.generate_image(self.save_dir, self.color_map, max_clusters)
 
     elif self.chart_type == "smallmultiples":
         print("Executing Small Multiples")
         smallMultiples = SmallMultiples(self.folder2d, self.property)
-        smallMultiples.draw_small_multiples(
-            self.save_dir, self.color_map, max_clusters
-        )
+        smallMultiples.draw_small_multiples(self.save_dir, self.color_map, max_clusters)
     else:
         raise Exception(
             "Visualization type not recognized. Please choose between Pixelization and Smallmultiples"
