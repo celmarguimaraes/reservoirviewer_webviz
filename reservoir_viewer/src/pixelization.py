@@ -141,13 +141,14 @@ class Pixelization:
         values = self.get_min_and_max()
 
         try:
-            plt.figure(figsize=(self.max_j, self.max_i), layout="constrained")
+            plt.figure(figsize=(self.max_i * 0.3, self.max_j * 0.3), layout="constrained", dpi=500)
             cmap = plt.get_cmap(color_map)
             norm = colors.Normalize(vmin=values[0], vmax=values[1])
-            plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap))
+            plt.colorbar(cm.ScalarMappable(norm=norm, cmap=cmap), shrink=0.5)
             plt.imshow(
                 np.flip(array, 1), cmap=color_map, vmin=values[0], vmax=values[1]
             )
+            plt.axis('off')
             plt.savefig(path)
         except:
             raise Exception("Something went down while generating the image.")
