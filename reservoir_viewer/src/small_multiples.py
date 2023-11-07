@@ -50,29 +50,31 @@ class SmallMultiples:
         return reordered_matrix
 
     def draw_small_multiples(self, save_dir, color_map, max_clusters):
-        fig = plt.figure(figsize=(self.max_j, self.max_i))
+        fig = plt.figure(figsize=(self.max_i, self.max_j))
         grid = self.generate_model_matrix()
         limit_values = self.get_min_max_values(grid)
         grid_final = self.reorder_with_clusters(grid, max_clusters)
         dimension = math.ceil(math.sqrt(self.num_of_models))
 
-        gs = gridspec.GridSpec(dimension, dimension, wspace=0.01, hspace=0.01)
+        gs = gridspec.GridSpec(dimension, dimension, wspace=0.2, hspace=0.01)
 
         count = 0
         for i in range(dimension):
             for j in range(dimension):
                 if count < self.num_of_models:
                     ax = plt.subplot(gs[i, j])
+                    rotated = np.rot90(grid_final[count], 3, (0, 1)) # Rotate image
+                    flipped = np.flip(rotated, 1) # Mirror image 
                     ax.imshow(
-                        grid_final[count],
+                        flipped,
                         cmap=color_map,
                         interpolation="none",
                         vmin=limit_values[0],
                         vmax=limit_values[1],
                     )
 
-                    ax.set_xlim(-10, self.max_j + 10)
-                    ax.set_ylim(-10, self.max_i + 10)
+                    ax.set_xlim(-5, self.max_i + 5)
+                    ax.set_ylim(-5, self.max_j + 5)
 
                     ax.set_xticks([])
                     ax.set_yticks([])
