@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class CLusterizationUtils:
+class ClusterizationUtils:
     def __init__(self, models_vector):
         self.models_vector = models_vector
 
@@ -13,18 +13,10 @@ class CLusterizationUtils:
 
         return feature_vector
 
-    def normalize_column(self, data_frame, property):
-        column_values = data_frame[property]
-        data_frame[property] = (column_values - column_values.min()) / (
-            column_values.max() - column_values.min()
-        )
-
-        return data_frame[property]
-
     def get_value_classification(self, value, high, intermediary, low) -> None:
-        if value >= 0 and value < 0.33:
+        if (value >= 0 and value < 266) or value == np.nan:
             low = low + 1
-        elif value >= 0.33 and value <= 0.66:
+        elif value >= 266 and value <= 533:
             intermediary = intermediary + 1
         else:
             high = high + 1
@@ -51,7 +43,12 @@ class CLusterizationUtils:
             intermediary = 0
             low = 0
             for j in i:
-                self.get_value_classification(j, high, intermediary, low)
+                if (j >= 0 and j < 266):
+                    low = low + 1
+                elif j >= 266 and j <= 533:
+                    intermediary = intermediary + 1
+                elif j > 533:
+                    high = high + 1
 
             high_values.append(high)
             intermediary_values.append(intermediary)

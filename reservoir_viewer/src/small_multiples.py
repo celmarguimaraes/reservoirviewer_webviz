@@ -41,19 +41,37 @@ class SmallMultiples:
         xmeans_instance = XmeansClusterization(matrix, max_clusters)
         return xmeans_instance.cluster_models()
 
-    def reorder_with_clusters(self, matrix, max_clusters):
+    def reorder_with_clusters(self, matrix, clusters):
         reordered_matrix = []
-        clusters = self.get_clusters(matrix, max_clusters)
         for cluster in clusters:
             reordered_matrix.append(matrix[cluster])
 
         return reordered_matrix
 
+    def get_clusters_linearized(self, clusters):
+        clusters_linearized = []
+        for cluster in clusters:
+                clusters_linearized = clusters_linearized + cluster
+
+        return clusters_linearized
+
+    def get_clusters_dict(self, linearized, clusters):
+        linearized_dict = {}
+        for i in range(len(linearized)):
+            for j in range(len(clusters)):
+                if linearized[i] in clusters[j]:
+                    linearized_dict[linearized[i]] = j
+
+        return linearized_dict
+
     def draw_small_multiples(self, save_dir, color_map, max_clusters):
         fig = plt.figure(figsize=(self.max_i, self.max_j))
         grid = self.generate_model_matrix()
         limit_values = self.get_min_max_values(grid)
-        grid_final = self.reorder_with_clusters(grid, max_clusters)
+        clusters = self.get_clusters(grid, max_clusters)
+        linearized_clusters = self.get_clusters_linearized(clusters)
+        clusters_dict = self.get_clusters_dict(linearized_clusters, clusters)
+        grid_final = self.reorder_with_clusters(grid, linearized_clusters)
         dimension = math.ceil(math.sqrt(self.num_of_models))
 
         gs = gridspec.GridSpec(dimension, dimension, wspace=0.2, hspace=0.01)
@@ -82,6 +100,31 @@ class SmallMultiples:
                     count = count + 1
                 else:
                     break
+
+        all_axes = fig.get_axes()
+
+        # Delimit the clusters
+        for index, ax in enumerate(all_axes):
+            for sp in ax.spines.values():
+                sp.set_visible(False)
+                if (index < self.num_of_models-1):
+                    if clusters_dict[linearized_clusters[index]] != clusters_dict[linearized_clusters[index+1]]: # If right model is from a different cluster
+                        ax.spines['right'].set_visible(True)
+                        ax.spines['right'].set_linestyle('dashed')
+                if (index < self.num_of_models-dimension):
+                    if clusters_dict[linearized_clusters[index]] != clusters_dict[linearized_clusters[index+dimension]]: # If bottom model is from a different cluster
+                        ax.spines['bottom'].set_visible(True)
+                        ax.spines['bottom'].set_linestyle('dashed')
+
+                # Border of the image
+                if ax.get_subplotspec().is_first_row():
+                    ax.spines['top'].set_visible(True)
+                if ax.get_subplotspec().is_last_row():
+                    ax.spines['bottom'].set_visible(True)
+                if ax.get_subplotspec().is_first_col():
+                    ax.spines['left'].set_visible(True)
+                if ax.get_subplotspec().is_last_col():
+                    ax.spines['right'].set_visible(True)
 
         fig.subplots_adjust(right=0.8)
         cbar_ax = fig.add_axes([0.85, 0.15, 0.05, 0.7])
