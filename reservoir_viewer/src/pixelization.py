@@ -161,8 +161,12 @@ class Pixelization:
 
     def reorder_matrix_based_on_cluster(self, matrix, max_clusters):
         reordered_matrix = []
+        clusters_linearized = []
         clusters = self.get_clusters(matrix, max_clusters)
         for cluster in clusters:
+                clusters_linearized = clusters_linearized + cluster
+
+        for cluster in clusters_linearized:
             reordered_matrix.append(matrix[cluster])
 
         return reordered_matrix
