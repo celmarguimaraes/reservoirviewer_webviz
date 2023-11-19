@@ -37,7 +37,7 @@ class SmallMultiples:
             self.num_of_models, self.max_i, self.max_j
         )
 
-    def get_clusters(self, matrix, max_clusters):
+    def get_clusters(self, matrix, max_clusters, min, max):
         xmeans_instance = XmeansClusterization(matrix, max_clusters)
         return xmeans_instance.cluster_models()
 
@@ -68,7 +68,7 @@ class SmallMultiples:
         fig = plt.figure(figsize=(self.max_i, self.max_j))
         grid = self.generate_model_matrix()
         limit_values = self.get_min_max_values(grid)
-        clusters = self.get_clusters(grid, max_clusters)
+        clusters = self.get_clusters(grid, max_clusters, limit_values[0], limit_values[1])
         linearized_clusters = self.get_clusters_linearized(clusters)
         clusters_dict = self.get_clusters_dict(linearized_clusters, clusters)
         grid_final = self.reorder_with_clusters(grid, linearized_clusters)

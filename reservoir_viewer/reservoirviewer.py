@@ -86,6 +86,22 @@ class ReservoirViewer(WebvizPluginABC):
                                             "label": "snake curve",
                                             "value": "snake curve",
                                         },
+                                        {
+                                            "label": "hilbert curve",
+                                            "value": "hilbert curve",
+                                        },
+                                        {
+                                            "label": "pseudo-hilbert curve",
+                                            "value": "pseudo-hilbert curve",
+                                        },
+                                        {
+                                            "label": "morton curve",
+                                            "value": "morton curve",
+                                        },
+                                        {
+                                            "label": "zhang curve",
+                                            "value": "zhang curve",
+                                        },
                                     ],
                                     id="input-layout_curve",
                                 ),

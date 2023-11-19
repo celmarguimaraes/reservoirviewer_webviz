@@ -2,17 +2,23 @@ import math
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 import warnings
 from pandas import DataFrame
 from matplotlib import cm, colors
 
 from reservoir_viewer.src.parser.parse_prop_files import parse_file
 
-from .curve import Curve
-from .dimension import Dimension
-from .snake_curve import SnakeCurve
+from .curve.curve_utils.dimension import Dimension
 from .clusterization.xmeans_clustering import XmeansClusterization
+
+from .curve.pseudo_hilbert_curve import PseudoHilbertCurve
+from .curve.hilbert_curve import HilbertCurve
+from .curve.zhang_curve.zhang_curve import ZhangCurve
+from .curve.snake_curve import SnakeCurve
+from .curve.morton import MortonCurve
+from .curve.curve_utils.dimension import Dimension
+from .curve.curve_utils.coordinate import Coordinate
+from .curve.curve_utils.plot_utils import plot_curve
 
 np.warnings = warnings
 
@@ -27,11 +33,19 @@ class Pixelization:
         self.curve: str = curve
 
     def set_curve(
-        self, curve_name: str, number_of_elements: int, dimension: Dimension
-    ) -> Curve:
+        self, curve_name: int, dimension: Dimension
+    ):
         match curve_name:
             case "snake curve":
-                return SnakeCurve(number_of_elements, dimension)
+                return SnakeCurve(self.num_of_models, dimension)
+            case "hilbert curve":
+                return HilbertCurve(self.num_of_models, dimension)
+            case "pseudo-hilbert curve":
+                return PseudoHilbertCurve(self.num_of_models, dimension)
+            case "morton curve":
+                return MortonCurve(self.num_of_models, dimension)
+            case "zhang curve":
+                return ZhangCurve(self.num_of_models, dimension)
             case _:
                 raise Exception("This curve does not exist")
 
@@ -80,28 +94,37 @@ class Pixelization:
         shape: int = math.ceil(math.sqrt(self.num_of_models))
         prev_value = math.ceil(((shape**2) - self.num_of_models) / 2)
         next_value = math.floor(((shape**2) - self.num_of_models) / 2)
+        model_matrix = self.generate_model_matrix()
+        values = self.get_min_and_max()
+        clusters = self.get_clusters(model_matrix, max_clusters, values[0], values[1])
+        clusters_linearized =  []
+        for cluster in clusters:
+                clusters_linearized = clusters_linearized + cluster
+
         matrix = self.reorder_matrix_based_on_cluster(
-            self.generate_model_matrix(), max_clusters
+            model_matrix, clusters_linearized
         )
         dimension = Dimension(shape, shape)
-        curve = self.set_curve(self.curve, shape * shape, dimension)
+        curve = self.set_curve(self.curve, dimension)
+
+        # for model in range(prev_value + next_value):
+        #     matrix.append(np.full((self.max_i, self.max_j), np.nan))
 
         result = []
         for i in range(self.max_i):
             for j in range(self.max_j):
-                list_of_values = []
+                list_of_values = np.full((shape, shape), np.nan)
                 for m in range(self.num_of_models):
-                    valor = matrix[m][i][j]
-                    list_of_values.append(valor)
-                list_of_values = np.pad(
-                    list_of_values,
-                    (prev_value, next_value),
-                    "constant",
-                    constant_values=np.nan,
-                )
-                list_of_values = np.array(list_of_values).reshape(shape, shape)
-                # Flip every row with odd index - Snake Curve
-                list_of_values = curve.parse_matrix(list_of_values)
+                    model: Coordinate = curve.get_coordinate(m)
+                    list_of_values[model.get_x()][model.get_y()] = matrix[m][i][j]
+                    # list_of_values.append(valor)
+                # list_of_values = np.pad(
+                #     list_of_values,
+                #     (prev_value, next_value),
+                #     "constant",
+                #     constant_values=np.nan,
+                # )
+                # list_of_values = np.array(list_of_values).reshape(shape, shape)
                 result.append(list_of_values)
 
         return np.array(result)
@@ -155,17 +178,12 @@ class Pixelization:
         except:
             raise Exception("Something went down while generating the image.")
 
-    def get_clusters(self, matrix, max_clusters):
-        xmeans_instance = XmeansClusterization(matrix, max_clusters)
+    def get_clusters(self, matrix, max_clusters, min, max):
+        xmeans_instance = XmeansClusterization(matrix, max_clusters, min, max)
         return xmeans_instance.cluster_models()
 
-    def reorder_matrix_based_on_cluster(self, matrix, max_clusters):
+    def reorder_matrix_based_on_cluster(self, matrix, clusters_linearized):
         reordered_matrix = []
-        clusters_linearized = []
-        clusters = self.get_clusters(matrix, max_clusters)
-        for cluster in clusters:
-                clusters_linearized = clusters_linearized + cluster
-
         for cluster in clusters_linearized:
             reordered_matrix.append(matrix[cluster])
 
