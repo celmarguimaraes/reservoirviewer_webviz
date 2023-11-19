@@ -38,7 +38,7 @@ class SmallMultiples:
         )
 
     def get_clusters(self, matrix, max_clusters, min, max):
-        xmeans_instance = XmeansClusterization(matrix, max_clusters)
+        xmeans_instance = XmeansClusterization(matrix, max_clusters, min, max)
         return xmeans_instance.cluster_models()
 
     def reorder_with_clusters(self, matrix, clusters):
