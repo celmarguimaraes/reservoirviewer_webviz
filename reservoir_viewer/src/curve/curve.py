@@ -5,7 +5,7 @@ from .curve_utils.dimension import Dimension
 
 
 class Curve(ABC):
-    def __init__(self, number_of_elements:int, dimension:Dimension):
+    def __init__(self, number_of_elements: int, dimension: Dimension):
         self.number_of_elements = number_of_elements
         self.dimension = dimension
 
@@ -13,13 +13,12 @@ class Curve(ABC):
         return self.number_of_elements
 
     @abstractmethod
-    def get_coordinate(self, d:int) -> Coordinate:
+    def get_coordinate(self, d: int) -> Coordinate:
         pass
-    
+
     @abstractmethod
-    def get_d(self, coordinate:Coordinate) -> int:
+    def get_d(self, coordinate: Coordinate) -> int:
         pass
 
     def get_dimension(self) -> Dimension:
         return self.dimension
-

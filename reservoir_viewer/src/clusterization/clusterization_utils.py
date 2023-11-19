@@ -18,7 +18,9 @@ class ClusterizationUtils:
         intermediary_values = []
         low_values = []
 
-        self.get_values_from_models(model, high_values, intermediary_values, low_values, min, max)
+        self.get_values_from_models(
+            model, high_values, intermediary_values, low_values, min, max
+        )
 
         inverted_model = np.transpose(model)
         self.get_values_from_models(
@@ -35,11 +37,11 @@ class ClusterizationUtils:
             intermediary = 0
             low = 0
             for j in i:
-                if (j >= min and j < max/3):
+                if j >= min and j < max / 3:
                     low = low + 1
-                elif j >= max/3 and j <= (2*max)/3:
+                elif j >= max / 3 and j <= (2 * max) / 3:
                     intermediary = intermediary + 1
-                elif j > (2*max)/3:
+                elif j > (2 * max) / 3:
                     high = high + 1
 
             high_values.append(high)

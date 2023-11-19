@@ -23,7 +23,7 @@ def settingDrawConfigs(self, max_clusters):
 
     elif self.chart_type == "smallmultiples":
         print("Executing Small Multiples")
-        smallMultiples = SmallMultiples(self.folder2d, self.property)
+        smallMultiples = SmallMultiples(self.folder2d, self.layout_curve, self.property)
         smallMultiples.draw_small_multiples(self.save_dir, self.color_map, max_clusters)
     else:
         raise Exception(

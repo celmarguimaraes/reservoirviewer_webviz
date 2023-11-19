@@ -18,7 +18,6 @@ from .curve.snake_curve import SnakeCurve
 from .curve.morton import MortonCurve
 from .curve.curve_utils.dimension import Dimension
 from .curve.curve_utils.coordinate import Coordinate
-from .curve.curve_utils.plot_utils import plot_curve
 
 np.warnings = warnings
 
@@ -32,9 +31,7 @@ class Pixelization:
         self.num_of_models: int = int(self.file.iloc[-1, 2])
         self.curve: str = curve
 
-    def set_curve(
-        self, curve_name: int, dimension: Dimension
-    ):
+    def set_curve(self, curve_name: int, dimension: Dimension):
         match curve_name:
             case "snake curve":
                 return SnakeCurve(self.num_of_models, dimension)
@@ -97,13 +94,11 @@ class Pixelization:
         model_matrix = self.generate_model_matrix()
         values = self.get_min_and_max()
         clusters = self.get_clusters(model_matrix, max_clusters, values[0], values[1])
-        clusters_linearized =  []
+        clusters_linearized = []
         for cluster in clusters:
-                clusters_linearized = clusters_linearized + cluster
+            clusters_linearized = clusters_linearized + cluster
 
-        matrix = self.reorder_matrix_based_on_cluster(
-            model_matrix, clusters_linearized
-        )
+        matrix = self.reorder_matrix_based_on_cluster(model_matrix, clusters_linearized)
         dimension = Dimension(shape, shape)
         curve = self.set_curve(self.curve, dimension)
 

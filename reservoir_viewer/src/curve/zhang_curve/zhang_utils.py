@@ -93,15 +93,17 @@ class Block:
 
     # As the paper uses one-based indexing for the scanning types, 'None' has
     # been added in the zero position
-    scan_instructions = [None,
-                         (0, 0, 0),
-                         (0, 0, 1),
-                         (1, 1, 0),
-                         (1, 1, 1),
-                         (1, 0, 0),
-                         (0, 1, 1),
-                         (0, 1, 0),
-                         (1, 0, 1)]
+    scan_instructions = [
+        None,
+        (0, 0, 0),
+        (0, 0, 1),
+        (1, 1, 0),
+        (1, 1, 1),
+        (1, 0, 0),
+        (0, 1, 1),
+        (0, 1, 0),
+        (1, 0, 1),
+    ]
 
     # An improvement not included in the paper but added later by the author
     # changes the scan pattern for blocks with even-even parity. With both side
@@ -110,15 +112,17 @@ class Block:
     # with 4 blocks of type 6,7,7,8 with relative positions
     # (0, 1), (0, 0), (1, 0), (1, 1).  Each tuple below contains 4 tuples.
     # Each of these hold (Type, relative_x_position, relative_y_position)
-    even_even_optimisation_path = [None,
-                                   ((2, 0, 0), (1, 0, 1), (1, 1, 1), (4, 1, 0)),
-                                   ((1, 0, 0), (2, 1, 0), (2, 1, 1), (3, 0, 1)),
-                                   ((4, 1, 1), (3, 1, 0), (3, 0, 0), (2, 0, 1)),
-                                   ((3, 1, 1), (4, 0, 1), (4, 0, 0), (1, 1, 0)),
-                                   ((8, 1, 0), (5, 1, 1), (5, 0, 1), (6, 0, 0)),
-                                   ((7, 0, 1), (6, 1, 1), (6, 1, 0), (5, 0, 0)),
-                                   ((6, 0, 1), (7, 0, 0), (7, 1, 0), (8, 1, 1)),
-                                   ((5, 1, 0), (8, 0, 0), (8, 0, 1), (7, 1, 1))]
+    even_even_optimisation_path = [
+        None,
+        ((2, 0, 0), (1, 0, 1), (1, 1, 1), (4, 1, 0)),
+        ((1, 0, 0), (2, 1, 0), (2, 1, 1), (3, 0, 1)),
+        ((4, 1, 1), (3, 1, 0), (3, 0, 0), (2, 0, 1)),
+        ((3, 1, 1), (4, 0, 1), (4, 0, 0), (1, 1, 0)),
+        ((8, 1, 0), (5, 1, 1), (5, 0, 1), (6, 0, 0)),
+        ((7, 0, 1), (6, 1, 1), (6, 1, 0), (5, 0, 0)),
+        ((6, 0, 1), (7, 0, 0), (7, 1, 0), (8, 1, 1)),
+        ((5, 1, 0), (8, 0, 0), (8, 0, 1), (7, 1, 1)),
+    ]
 
     def __init__(self, hilbert_type, address_x, address_y):
         """Initialize a block with its type and location in the Hilbert curve.
@@ -180,11 +184,9 @@ class Block:
         Args
             parent_block (block): A Block that this Block will be positioned in
         """
-        self.address_x =\
-            operator.add(parent_block.address_x, self.address_x)
+        self.address_x = operator.add(parent_block.address_x, self.address_x)
 
-        self.address_y =\
-            operator.add(parent_block.address_y, self.address_y)
+        self.address_y = operator.add(parent_block.address_y, self.address_y)
 
     def set_coordinates(self, x_coordinate, y_coordinate):
         """Set the location of the bottom left cell of the Block.
@@ -203,9 +205,10 @@ class Block:
         """
         self.x_size = x_size
         self.y_size = y_size
-        self.shape = (Parity.EVEN if x_size % 2 == 0 else Parity.ODD,
-                      Parity.EVEN if
-                      y_size % 2 == 0 else Parity.ODD)
+        self.shape = (
+            Parity.EVEN if x_size % 2 == 0 else Parity.ODD,
+            Parity.EVEN if y_size % 2 == 0 else Parity.ODD,
+        )
 
     def copy(self):
         """Return a copy of the Block object.
@@ -232,34 +235,37 @@ class Block:
                                 coordinates
         """
         coordinates = []
-        if (self.x_size % 4 == 0 and
-                self.y_size % 4 == 0):
+        if self.x_size % 4 == 0 and self.y_size % 4 == 0:
             half_x_size = self.x_size // 2
             half_y_size = self.y_size // 2
 
             # Create the sub-blocks
-            sub_blocks = [Block(None, [], []),
-                          Block(None, [], []),
-                          Block(None, [], []),
-                          Block(None, [], [])]
+            sub_blocks = [
+                Block(None, [], []),
+                Block(None, [], []),
+                Block(None, [], []),
+                Block(None, [], []),
+            ]
 
             # Set the parameters for the sub-blocks
             for block_index in range(4):
                 sub_blocks[block_index].set_size(half_x_size, half_y_size)
 
                 sub_blocks[block_index].set_coordinates(
-                    self.x_pos +
-                    self.even_even_optimisation_path[
-                        self.scan_type][block_index][1] * half_x_size,
-                    self.y_pos +
-                    self.even_even_optimisation_path[
-                        self.scan_type][block_index][2] * half_y_size)
+                    self.x_pos
+                    + self.even_even_optimisation_path[self.scan_type][block_index][1]
+                    * half_x_size,
+                    self.y_pos
+                    + self.even_even_optimisation_path[self.scan_type][block_index][2]
+                    * half_y_size,
+                )
 
-                sub_blocks[block_index].scan_type =\
-                    self.even_even_optimisation_path[
-                        self.scan_type][block_index][0]
-                coordinates = coordinates +\
-                    sub_blocks[block_index].bidirectional_raster_scan()
+                sub_blocks[block_index].scan_type = self.even_even_optimisation_path[
+                    self.scan_type
+                ][block_index][0]
+                coordinates = (
+                    coordinates + sub_blocks[block_index].bidirectional_raster_scan()
+                )
         else:
             coordinates = self.bidirectional_raster_scan()
         return coordinates
@@ -314,8 +320,10 @@ class Block:
         # To scan in the x direction and then the y direction swap the
         # directions sizes and the scan directions
         if instructions[2] == 1:
-            primary_scan_direction, secondary_scan_directions =\
-                secondary_scan_directions, primary_scan_direction
+            primary_scan_direction, secondary_scan_directions = (
+                secondary_scan_directions,
+                primary_scan_direction,
+            )
             primary_size, secondary_size = secondary_size, primary_size
 
         # Go backwards one cell before starting the loop as the first
@@ -368,62 +376,68 @@ class PseudoHilbert:
 
     # Lookup table for directions when given two consecutive Hilbert block types
     # Only works for blocks with EVEN EVEN parity
-    even_even_block_directions = [None,
-                                  [None,
-                                   Direction.RIGHT,
-                                   Direction.RIGHT,
-                                   Direction.DOWN,
-                                   Direction.DOWN],
-                                  [None,
-                                   Direction.UP,
-                                   Direction.UP,
-                                   Direction.LEFT,
-                                   Direction.LEFT],
-                                  [None,
-                                   Direction.UP,
-                                   Direction.UP,
-                                   Direction.LEFT,
-                                   Direction.LEFT],
-                                  [None,
-                                   Direction.RIGHT,
-                                   Direction.RIGHT,
-                                   Direction.DOWN,
-                                   Direction.DOWN]]
+    even_even_block_directions = [
+        None,
+        [None, Direction.RIGHT, Direction.RIGHT, Direction.DOWN, Direction.DOWN],
+        [None, Direction.UP, Direction.UP, Direction.LEFT, Direction.LEFT],
+        [None, Direction.UP, Direction.UP, Direction.LEFT, Direction.LEFT],
+        [None, Direction.RIGHT, Direction.RIGHT, Direction.DOWN, Direction.DOWN],
+    ]
 
     # When generating the hilbert curve an initial block is replaced by
     # 4 sub blocks.  This process is repeated until the required order is
     # reached.  This lookup table holds the subtypes and shape for each block.
     # 'None' is used because of the one based indexing used in the paper.
-    template_table = [None,
-                      [Block(2, [0], [0]), Block(1, [0], [1]),
-                       Block(1, [1], [1]), Block(4, [1], [0])],
-                      [Block(1, [0], [0]), Block(2, [1], [0]),
-                       Block(2, [1], [1]), Block(3, [0], [1])],
-                      [Block(4, [1], [1]), Block(3, [1], [0]),
-                       Block(3, [0], [0]), Block(2, [0], [1])],
-                      [Block(3, [1], [1]), Block(4, [0], [1]),
-                       Block(4, [0], [0]), Block(1, [1], [0])]]
+    template_table = [
+        None,
+        [
+            Block(2, [0], [0]),
+            Block(1, [0], [1]),
+            Block(1, [1], [1]),
+            Block(4, [1], [0]),
+        ],
+        [
+            Block(1, [0], [0]),
+            Block(2, [1], [0]),
+            Block(2, [1], [1]),
+            Block(3, [0], [1]),
+        ],
+        [
+            Block(4, [1], [1]),
+            Block(3, [1], [0]),
+            Block(3, [0], [0]),
+            Block(2, [0], [1]),
+        ],
+        [
+            Block(3, [1], [1]),
+            Block(4, [0], [1]),
+            Block(4, [0], [0]),
+            Block(1, [1], [0]),
+        ],
+    ]
 
     # When at least one of the edges of the overall region is odd,
     # these are the scan types to use for even-even blocks.
     # For example, if you enter a block by going right and leave it by going up
     # the scan type is 7
-    either_odd_scan_lookup = {(Direction.LEFT, Direction.LEFT): 5,
-                              (Direction.LEFT, Direction.UP): 8,
-                              (Direction.LEFT, Direction.DOWN): 5,
-                              (Direction.RIGHT, Direction.RIGHT): 7,
-                              (Direction.RIGHT, Direction.UP): 7,
-                              (Direction.RIGHT, Direction.DOWN): 6,
-                              (Direction.UP, Direction.LEFT): 5,
-                              (Direction.UP, Direction.RIGHT): 8,
-                              (Direction.UP, Direction.UP): 8,
-                              (Direction.DOWN, Direction.LEFT): 6,
-                              (Direction.DOWN, Direction.RIGHT): 7,
-                              (Direction.DOWN, Direction.DOWN): 6,
-                              (None, Direction.UP): 0,
-                              (None, Direction.RIGHT): 0,
-                              (Direction.RIGHT, None): 7,  # The last block
-                              (Direction.DOWN, None): 7}  # The last block
+    either_odd_scan_lookup = {
+        (Direction.LEFT, Direction.LEFT): 5,
+        (Direction.LEFT, Direction.UP): 8,
+        (Direction.LEFT, Direction.DOWN): 5,
+        (Direction.RIGHT, Direction.RIGHT): 7,
+        (Direction.RIGHT, Direction.UP): 7,
+        (Direction.RIGHT, Direction.DOWN): 6,
+        (Direction.UP, Direction.LEFT): 5,
+        (Direction.UP, Direction.RIGHT): 8,
+        (Direction.UP, Direction.UP): 8,
+        (Direction.DOWN, Direction.LEFT): 6,
+        (Direction.DOWN, Direction.RIGHT): 7,
+        (Direction.DOWN, Direction.DOWN): 6,
+        (None, Direction.UP): 0,
+        (None, Direction.RIGHT): 0,
+        (Direction.RIGHT, None): 7,  # The last block
+        (Direction.DOWN, None): 7,
+    }  # The last block
 
     @staticmethod
     def division(length):
@@ -457,8 +471,9 @@ class PseudoHilbert:
         """
         # When travelling between two blocks the direction can be determined
         # by the hilbert type of each block.  This performs that lookup.
-        return (self.even_even_block_directions[block_1.hilbert_type]
-                )[block_2.hilbert_type]
+        return (self.even_even_block_directions[block_1.hilbert_type])[
+            block_2.hilbert_type
+        ]
 
     @staticmethod
     def set_scan_directions_even_even(block_list):
@@ -479,11 +494,10 @@ class PseudoHilbert:
             block_list (list): A list of blocks that need their scan type set.
         """
         for block in block_list:  # type: Block
-
             # Set the scan type assuming that the shape is even-even
-            block.scan_type =\
-                self.either_odd_scan_lookup[(block.travel_direction_to_enter,
-                                             block.travel_direction_to_leave)]
+            block.scan_type = self.either_odd_scan_lookup[
+                (block.travel_direction_to_enter, block.travel_direction_to_leave)
+            ]
 
             # Fix the scan types for blocks that aren't even-even
             # These are predetermined values from the paper
@@ -514,8 +528,7 @@ class PseudoHilbert:
 
         # Minimum of floor(log2(width/2)) and floor(log2(height/2))
         # Determines the order of the parent Hilbert curve
-        self.order = min(math.frexp(self.width)[1],
-                         math.frexp(self.height)[1]) - 2
+        self.order = min(math.frexp(self.width)[1], math.frexp(self.height)[1]) - 2
 
         x_divisions = [self.width]
         y_divisions = [self.height]
@@ -540,20 +553,20 @@ class PseudoHilbert:
         cumulative_y_divisions.pop()
 
         # Generate the Hilbert curve in an iterative manner
-        block_list_size = pow(2, 2*self.order)
+        block_list_size = pow(2, 2 * self.order)
         block_list = [Block] * block_list_size
         block_list[0] = Block(1, [], [])
         current_block_count = 1
         for order_count in range(self.order):
-
             # Replace blocks with sub-blocks
-            for block_count in range(current_block_count-1, -1, -1):
+            for block_count in range(current_block_count - 1, -1, -1):
                 block = block_list[block_count]  # type: Block
                 hilbert_type = block.hilbert_type
 
                 # Create new block by copying them
-                new_blocks = [block.copy() for block in
-                              self.template_table[hilbert_type]]
+                new_blocks = [
+                    block.copy() for block in self.template_table[hilbert_type]
+                ]
 
                 # Position new blocks within parent block
                 for new_block in new_blocks:
@@ -569,9 +582,9 @@ class PseudoHilbert:
 
         # Set block travel directions
         for block_index in range(0, len(block_list) - 1):
-            direction =\
-                self.hilbert_type_to_direction(block_list[block_index],
-                                               block_list[block_index + 1])
+            direction = self.hilbert_type_to_direction(
+                block_list[block_index], block_list[block_index + 1]
+            )
 
             first_block = block_list[block_index]
             second_block = block_list[block_index + 1]
@@ -582,10 +595,11 @@ class PseudoHilbert:
         # Set the coordinates of each block
         for block in block_list:  # type: Block
             block.calculate_decimal_indices()
-            block.set_size(x_divisions[block.x_index],
-                           y_divisions[block.y_index])
-            block.set_coordinates(cumulative_x_divisions[block.x_index],
-                                  cumulative_y_divisions[block.y_index])
+            block.set_size(x_divisions[block.x_index], y_divisions[block.y_index])
+            block.set_coordinates(
+                cumulative_x_divisions[block.x_index],
+                cumulative_y_divisions[block.y_index],
+            )
 
         # The shape of the overall arbitrary rectangle is the same as the first
         # block as all other row and column dimensions are even.
@@ -597,10 +611,10 @@ class PseudoHilbert:
             self.set_scan_directions_either_odd(block_list)
 
         # Create the output lists.  i and j are unused.
-        self.coordinate_to_index =\
-            [[None for i in range(self.height)] for j in range(self.width)]
-        self.index_to_coordinate =\
-            [None for i in range(self.height * self.width)]
+        self.coordinate_to_index = [
+            [None for i in range(self.height)] for j in range(self.width)
+        ]
+        self.index_to_coordinate = [None for i in range(self.height * self.width)]
 
         # Scan each block and then fill the output lists
         counter = 0
@@ -613,16 +627,18 @@ class PseudoHilbert:
 
             # debugging code for blocks
             if False:
-                print(block.hilbert_type,
-                      block.address_x,
-                      block.x_index,
-                      block.address_y,
-                      block.y_index,
-                      block.x_pos,
-                      block.y_pos,
-                      block.x_size,
-                      block.y_size,
-                      block.travel_direction_to_enter,
-                      block.travel_direction_to_leave,
-                      block.shape,
-                      block.scan_type)
+                print(
+                    block.hilbert_type,
+                    block.address_x,
+                    block.x_index,
+                    block.address_y,
+                    block.y_index,
+                    block.x_pos,
+                    block.y_pos,
+                    block.x_size,
+                    block.y_size,
+                    block.travel_direction_to_enter,
+                    block.travel_direction_to_leave,
+                    block.shape,
+                    block.scan_type,
+                )
