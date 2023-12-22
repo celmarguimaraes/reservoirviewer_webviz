@@ -1,65 +1,60 @@
-[![Build Status](https://github.com/equinor/webviz-plugin-boilerplate/workflows/webviz-plugin-boilerplate/badge.svg)](https://github.com/equinor/webviz-plugin-boilerplate/actions?query=branch%3Amaster)
-[![Python 3.6 | 3.7 | 3.8](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8%20|%203.9-blue.svg)](https://www.python.org/)
+# Reservoir Viewer for Web
 
-# Quickly get started creating plugins to `webviz-config`
+## How to Run
 
-This repository will quickly get you started creating your own [`webviz-config`](https://github.com/equinor/webviz-config) plugins :rocket:.
+### Pre-Requistes
 
-<br/>
+-   Python Version 3.11 or above;
+-   pip;
 
-## Create a new Python plugin package
+### Install the Libraries
 
-Creating a new Python package with [`webviz-config`](https://github.com/equinor/webviz-config) plugins by pushing [`Use this template`](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)-button.
+The libraries are listed in the `requirements.txt` file. You can install them using the following command (assuming you are at the root folder `reservoirviewer_webviz`).
 
-Configure new python package in repository by the following steps
+```
+pip install -r .\requirement.txt
+```
 
-1. Rename project
-2. Rename/Delete existing example plugins
+### Update for your modifications
 
-## Install your new Python plugin package
+When you change the code you can run the following command so the changes are applied.
 
-The default package created for you contains some dummy plugins. These you can later delete/and or overwrite with your fancy plugins. You can have an arbitrary number of plugins in your package.
-
-To install your plugin package in _development mode_, run
-
-```bash
-cd YOUR_PLUGIN_PROJECT
+```
 pip install -e .
 ```
 
-This will (first time) install all dependencies, but the `-e` flag will also make sure your plugin project is installed in edit/development mode. This means that when you update the Python files in your package, this will automatically be available in your current Python environment without having to reinstall the package.
+### Run Webviz
 
-## Test your new Python plugin package
+Assuming you have [Webviz](https://github.com/equinor/webviz-config) installed, you can run the following command (without the brackets) to start a local server with Reservoir Viewer for Web.
 
-After installation you can test the custom plugins from your package using the provided example configuration file:
-
-```bash
-webviz build ./webviz_config_files/reservoir_viewer_example.yaml
+```
+webviz build {path/to/config_file.yaml}
+e.g. webviz build .\webviz_config_files\reservoir_viewer_example.yaml
 ```
 
-<br/>
+## Current Limitations
 
-If you want to install test and linting dependencies, you can in addition run
+### Issues with Cluster Separation
 
-```bash
-pip install .[tests]
-```
+Currently the cluster separation on Small Multiples is not working as expected. It is possible to see that, on the image, the clusters is not well separated. It is visible that one or two models are part of the wrong cluster. Further debugging will be necessary to identify why that is happening but it may has something to do with the use of the space-filling curves.
 
-### Linting
+### Issues with Space-Filling Curves
 
-You can do automatic linting of your code changes by running
+Currently, only the Snake Curve and Zhang curve is working on Pixelization and, on Small Multiples, only the Snake Curve works. The issue is that, at some point, a Out Of Bound Exception is being thrown. The code related to the space-filling curve tries to access a out of bound index.
 
-```bash
-black --check reservoir_viewer # Check code style
-pylint reservoir_viewer # Check code quality
-bandit -r reservoir_viewer  # Check Python security best practice
-```
+### Deploy on the Cloud
 
-### Usage and documentation
+The software generates an image and displays it on the screen. The way it does is by generating the image, saving it locally on the user's computer and then accessing it and displaying on the screen. Despite working as expected locally, it brings some issues when it comes to using it on the cloud.
 
-For general usage, see the documentation on
-[webviz-config](https://github.com/equinor/webviz-config).
+First, it is necessary to consider several people using the software at the same time. Second, the images can only be accessed by the user who generated it. Third, the user may not inform a correct path to save and display the image.
 
-## Make awesome stuff :eyeglasses:
+## Future Works
 
-You are now ready to modify the package with your own plugins. Have fun! :cake:
+-   Improve documentation;
+-   Add support to new reservoir file formats;
+-   Add interactivity on the image plot;
+-   Add cluster separation within Small Multiples approach;
+-   Represent sets of wells on Pixelization approach;
+-   Include more space-filling curves to support Small Multiples and Pixelization techniques;
+-   Provide other clustering algorithms to both visualization techniques;
+-   Conduct a user-based evaluation of the current UI;
